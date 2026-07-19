@@ -1,94 +1,13 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  Share,
-} from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, ScrollView, StyleSheet, Share } from 'react-native';
+import { Href, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAdStore } from '@/store/useAdStore';
-import { Colors, Spacing, FontSize, Radius } from '@/constants/theme';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { StatusBadge } from '@/components/ui/StatusBadge';
+import { DisclaimerBanner } from '@/components/ui/DisclaimerBanner';
+import { tokens } from '@/constants/theme';
 import type { AdCopyResponse, CommercialScriptResponse } from '@/types';
-
-function AdCopyView({ data }: { data: AdCopyResponse }) {
-  return (
-    <>
-      <Section title="📬 Headline">
-        <Text style={styles.headline}>{data.headline}</Text>
-      </Section>
-      <Section title="📝 Body Copy">
-        <Text style={styles.body}>{data.body_copy}</Text>
-      </Section>
-      <Section title="📣 Call to Action">
-        <Text style={styles.cta}>{data.cta}</Text>
-      </Section>
-      {data.isi && (
-        <Section title="⚠️ Important Safety Information">
-          <Text style={styles.isi}>{data.isi}</Text>
-        </Section>
-      )}
-      <Section title="📋 Compliance Notes" warning>
-        <Text style={styles.compliance}>{data.compliance_notes}</Text>
-      </Section>
-    </>
-  );
-}
-
-function CommercialView({ data }: { data: CommercialScriptResponse }) {
-  return (
-    <>
-      <Section title={`🎥 ${data.duration_seconds}s Commercial Script`}>
-        <Text style={styles.body}>
-          {data.scenes.length} scenes total
-        </Text>
-      </Section>
-      {data.scenes.map((scene) => (
-        <View key={scene.scene_number} style={styles.sceneCard}>
-          <Text style={styles.sceneTitle}>
-            Scene {scene.scene_number} • {scene.duration_seconds}s
-          </Text>
-          <Text style={styles.sceneLabel}>Visual</Text>
-          <Text style={styles.sceneText}>{scene.visual_description}</Text>
-          <Text style={styles.sceneLabel}>Voiceover</Text>
-          <Text style={styles.sceneText}>{scene.voiceover}</Text>
-          {scene.on_screen_text && (
-            <>
-              <Text style={styles.sceneLabel}>On-Screen Text</Text>
-              <Text style={styles.sceneText}>{scene.on_screen_text}</Text>
-            </>
-          )}
-        </View>
-      ))}
-      <Section title="⚠️ ISI Voiceover">
-        <Text style={styles.isi}>{data.isi_voiceover}</Text>
-      </Section>
-      <Section title="📌 Compliance Notes" warning>
-        <Text style={styles.compliance}>{data.compliance_notes}</Text>
-      </Section>
-    </>
-  );
-}
-
-function Section({
-  title,
-  children,
-  warning,
-}: {
-  title: string;
-  children: React.ReactNode;
-  warning?: boolean;
-}) {
-  return (
-    <View style={[styles.section, warning && styles.sectionWarning]}>
-      <Text style={[styles.sectionTitle, warning && styles.sectionTitleWarning]}>
-        {title}
-      </Text>
-      {children}
-    </View>
-  );
-}
 
 export default function ResultScreen() {
   const router = useRouter();
@@ -99,12 +18,25 @@ export default function ResultScreen() {
     return null;
   }
 
+  const docId = `DRAFT-${Date.now().toString().slice(-6)}`;
+
   const handleShare = async () => {
-    const text =
-      mode === 'copy' && 'headline' in result
-        ? `${result.headline}\n\n${result.body_copy}\n\nCTA: ${result.cta}`
-        : `${form.drug_name} Commercial Script — ${(result as CommercialScriptResponse).duration_seconds}s`;
-    await Share.share({ message: text });
+    let message = `${form.drug_name} — ${docId}\n\n`;
+    if (mode === 'copy' && 'headline' in result) {
+      message += `${result.headline}\n\n${result.body_copy}\n\nCTA: ${result.cta}`;
+      if (result.isi) message += `\n\nISI:\n${result.isi}`;
+    } else if ('scenes' in result) {
+      message += result.scenes
+        .map(
+          (s) =>
+            `Scene ${s.scene_number} (${s.duration_seconds}s)\nVisual: ${s.visual_description}\nVO: ${s.voiceover}`
+        )
+        .join('\n\n');
+      message += `\n\nISI VO:\n${result.isi_voiceover}`;
+    }
+    message +=
+      '\n\n— Draft only. Requires MLR review before external use.';
+    await Share.share({ message });
   };
 
   const handleSave = () => {
@@ -115,131 +47,257 @@ export default function ResultScreen() {
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.drugBadge}>
-          <Text style={styles.drugName}>{form.drug_name}</Text>
-          <Text style={styles.modeLabel}>
-            {mode === 'copy' ? '📝 Ad Copy' : '🎥 Commercial'}
-          </Text>
-        </View>
+        <Card style={styles.headerCard}>
+          <View style={styles.headerTop}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.docId}>{docId} · Version 1</Text>
+              <Text style={styles.product}>{form.drug_name}</Text>
+              <Text style={styles.format}>
+                {mode === 'copy'
+                  ? 'Patient-facing copy'
+                  : `Broadcast script · ${(result as CommercialScriptResponse).duration_seconds ?? form.duration_seconds}s`}
+              </Text>
+            </View>
+            <StatusBadge status="needs_mlr" />
+          </View>
+        </Card>
 
         {mode === 'copy' && 'headline' in result ? (
-          <AdCopyView data={result as AdCopyResponse} />
+          <CopyDocument data={result as AdCopyResponse} />
         ) : (
-          <CommercialView data={result as CommercialScriptResponse} />
+          <ScriptDocument data={result as CommercialScriptResponse} />
         )}
 
-        <View style={styles.actions}>
-          <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-            <Text style={styles.saveBtnText}>💾 Save Project</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.shareBtn} onPress={handleShare}>
-            <Text style={styles.shareBtnText}>📤 Share</Text>
-          </TouchableOpacity>
-        </View>
+        <Card style={styles.riskCard}>
+          <Text style={styles.riskTitle}>MLR review findings</Text>
+          <Text style={styles.riskBody}>
+            {'compliance_notes' in result
+              ? result.compliance_notes
+              : 'Requires MLR review before use.'}
+          </Text>
+        </Card>
 
-        <TouchableOpacity
-          style={styles.newBtn}
-          onPress={() => { clearResult(); router.replace('/'); }}
-        >
-          <Text style={styles.newBtnText}>+ New Ad</Text>
-        </TouchableOpacity>
+        <DisclaimerBanner />
+
+        <View style={styles.actions}>
+          <Button title="Save to library" onPress={handleSave} style={{ flex: 1 }} />
+          <Button
+            title="Export / share"
+            variant="secondary"
+            onPress={handleShare}
+            style={{ flex: 1 }}
+          />
+        </View>
+        <Button
+          title="Create new draft"
+          variant="tertiary"
+          onPress={() => {
+            clearResult();
+            router.replace('/(tabs)/create' as Href);
+          }}
+          style={{ marginTop: 8 }}
+        />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+function CopyDocument({ data }: { data: AdCopyResponse }) {
+  return (
+    <>
+      <DocSection title="Headline">
+        <Text style={styles.docHeadline}>{data.headline}</Text>
+      </DocSection>
+      <DocSection title="Body copy">
+        <Text style={styles.docBody}>{data.body_copy}</Text>
+      </DocSection>
+      <DocSection title="Call to action">
+        <Text style={styles.docCta}>{data.cta}</Text>
+      </DocSection>
+      {data.isi ? (
+        <DocSection title="Important safety information" risk>
+          <Text style={styles.docIsi}>{data.isi}</Text>
+        </DocSection>
+      ) : null}
+    </>
+  );
+}
+
+function ScriptDocument({ data }: { data: CommercialScriptResponse }) {
+  return (
+    <>
+      <DocSection title="Script overview">
+        <Text style={styles.docBody}>
+          {data.scenes.length} scenes · {data.duration_seconds} seconds total
+        </Text>
+      </DocSection>
+      {data.scenes.map((scene) => (
+        <Card key={scene.scene_number} style={styles.sceneCard}>
+          <Text style={styles.sceneTitle}>
+            Scene {scene.scene_number}
+            <Text style={styles.sceneDur}> · {scene.duration_seconds}s</Text>
+          </Text>
+          <Meta label="Visual" value={scene.visual_description} />
+          <Meta label="Voiceover" value={scene.voiceover} />
+          {scene.on_screen_text ? (
+            <Meta label="On-screen text" value={scene.on_screen_text} />
+          ) : null}
+        </Card>
+      ))}
+      <DocSection title="ISI voiceover" risk>
+        <Text style={styles.docIsi}>{data.isi_voiceover}</Text>
+      </DocSection>
+    </>
+  );
+}
+
+function DocSection({
+  title,
+  children,
+  risk,
+}: {
+  title: string;
+  children: React.ReactNode;
+  risk?: boolean;
+}) {
+  return (
+    <Card style={[styles.section, risk && styles.sectionRisk]}>
+      <Text style={[styles.sectionTitle, risk && styles.sectionTitleRisk]}>
+        {title}
+      </Text>
+      {children}
+    </Card>
+  );
+}
+
+function Meta({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={{ marginTop: 10 }}>
+      <Text style={styles.metaLabel}>{label}</Text>
+      <Text style={styles.metaValue}>{value}</Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: Colors.background },
-  content: { padding: Spacing.md, paddingBottom: Spacing.xxl },
-  drugBadge: {
-    backgroundColor: Colors.primary,
-    borderRadius: Radius.lg,
-    padding: Spacing.md,
-    marginBottom: Spacing.md,
-    alignItems: 'center',
+  safe: { flex: 1, backgroundColor: tokens.color.neutral[50] },
+  content: {
+    padding: tokens.spacing[4],
+    paddingBottom: tokens.spacing[12],
+    gap: tokens.spacing[3],
   },
-  drugName: { color: Colors.white, fontSize: FontSize.xl, fontWeight: '800' },
-  modeLabel: { color: Colors.accentLight, fontSize: FontSize.sm, marginTop: 4 },
-  section: {
-    backgroundColor: Colors.card,
-    borderRadius: Radius.md,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderWidth: 1,
-    borderColor: Colors.border,
+  headerCard: {
+    backgroundColor: tokens.color.brand[900],
+    borderColor: tokens.color.brand[800],
   },
-  sectionWarning: { backgroundColor: '#FFFBEB', borderColor: '#FDE68A' },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  docId: {
+    color: 'rgba(255,255,255,0.65)',
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    marginBottom: 6,
+  },
+  product: {
+    color: tokens.color.neutral[0],
+    fontSize: tokens.typography.h1,
+    fontWeight: '700',
+    letterSpacing: -0.3,
+  },
+  format: {
+    marginTop: 4,
+    color: 'rgba(255,255,255,0.75)',
+    fontSize: tokens.typography.bodySmall,
+  },
+  section: { marginBottom: 0 },
+  sectionRisk: {
+    backgroundColor: tokens.color.status.warningBg,
+    borderColor: '#FDE68A',
+  },
   sectionTitle: {
-    fontSize: FontSize.md,
+    fontSize: 11,
     fontWeight: '700',
-    color: Colors.primary,
-    marginBottom: 8,
+    color: tokens.color.brand[700],
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+    marginBottom: 10,
   },
-  sectionTitleWarning: { color: '#92400E' },
-  headline: { fontSize: FontSize.lg, fontWeight: '700', color: Colors.text },
-  body: { fontSize: FontSize.md, color: Colors.text, lineHeight: 22 },
-  cta: {
-    fontSize: FontSize.md,
+  sectionTitleRisk: {
+    color: tokens.color.status.warning,
+  },
+  docHeadline: {
+    fontSize: tokens.typography.h2,
     fontWeight: '700',
-    color: Colors.accent,
+    color: tokens.color.neutral[900],
+    lineHeight: 26,
   },
-  isi: {
-    fontSize: FontSize.xs,
-    color: Colors.textSecondary,
-    lineHeight: 18,
+  docBody: {
+    fontSize: tokens.typography.body,
+    color: tokens.color.neutral[800],
+    lineHeight: 23,
   },
-  compliance: { fontSize: FontSize.sm, color: '#92400E', lineHeight: 20 },
+  docCta: {
+    fontSize: tokens.typography.body,
+    fontWeight: '700',
+    color: tokens.color.brand[800],
+    lineHeight: 22,
+  },
+  docIsi: {
+    fontSize: tokens.typography.bodySmall,
+    color: tokens.color.neutral[700],
+    lineHeight: 20,
+  },
   sceneCard: {
-    backgroundColor: Colors.card,
-    borderRadius: Radius.md,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderLeftWidth: 4,
-    borderLeftColor: Colors.accent,
+    borderLeftWidth: 3,
+    borderLeftColor: tokens.color.brand[700],
   },
   sceneTitle: {
-    fontSize: FontSize.md,
+    fontSize: tokens.typography.h3,
     fontWeight: '700',
-    color: Colors.primary,
+    color: tokens.color.neutral[900],
+  },
+  sceneDur: {
+    fontWeight: '500',
+    color: tokens.color.neutral[500],
+  },
+  metaLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: tokens.color.neutral[500],
+    textTransform: 'uppercase',
+    letterSpacing: 0.7,
+    marginBottom: 3,
+  },
+  metaValue: {
+    fontSize: tokens.typography.bodySmall,
+    color: tokens.color.neutral[800],
+    lineHeight: 20,
+  },
+  riskCard: {
+    backgroundColor: tokens.color.neutral[0],
+    borderColor: tokens.color.neutral[200],
+  },
+  riskTitle: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: tokens.color.neutral[500],
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
     marginBottom: 8,
   },
-  sceneLabel: {
-    fontSize: FontSize.xs,
-    fontWeight: '700',
-    color: Colors.textSecondary,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginTop: 6,
+  riskBody: {
+    fontSize: tokens.typography.bodySmall,
+    color: tokens.color.neutral[800],
+    lineHeight: 20,
   },
-  sceneText: { fontSize: FontSize.sm, color: Colors.text, lineHeight: 20 },
-  actions: { flexDirection: 'row', gap: Spacing.sm, marginTop: Spacing.md },
-  saveBtn: {
-    flex: 1,
-    backgroundColor: Colors.primary,
-    borderRadius: Radius.md,
-    padding: Spacing.md,
-    alignItems: 'center',
+  actions: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: tokens.spacing[2],
   },
-  saveBtnText: { color: Colors.white, fontWeight: '700', fontSize: FontSize.md },
-  shareBtn: {
-    flex: 1,
-    backgroundColor: Colors.card,
-    borderRadius: Radius.md,
-    padding: Spacing.md,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.border,
-  },
-  shareBtnText: { color: Colors.text, fontWeight: '700', fontSize: FontSize.md },
-  newBtn: {
-    marginTop: Spacing.sm,
-    borderRadius: Radius.md,
-    padding: Spacing.md,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.accent,
-  },
-  newBtnText: { color: Colors.accent, fontWeight: '700', fontSize: FontSize.md },
 });

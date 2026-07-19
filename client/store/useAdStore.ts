@@ -8,6 +8,7 @@ import type {
   AdCopyResponse,
   CommercialScriptResponse,
   SavedProject,
+  ContentStatus,
 } from '@/types';
 import { generateAdCopy, generateCommercialScript } from '@/lib/api';
 
@@ -27,17 +28,20 @@ interface AdFormState {
 interface AdStore {
   mode: AdMode;
   form: AdFormState;
+  wizardStep: number;
   isLoading: boolean;
   error: string | null;
   result: AdCopyResponse | CommercialScriptResponse | null;
   projects: SavedProject[];
 
   setMode: (mode: AdMode) => void;
+  setWizardStep: (step: number) => void;
   updateForm: (fields: Partial<AdFormState>) => void;
   resetForm: () => void;
   generate: () => Promise<void>;
   saveProject: () => void;
   deleteProject: (id: string) => void;
+  updateProjectStatus: (id: string, status: ContentStatus) => void;
   clearResult: () => void;
 }
 
@@ -45,13 +49,13 @@ const defaultForm: AdFormState = {
   drug_name: '',
   indication: '',
   key_benefits: [''],
-  target_audience: 'adults',
-  tone: 'hopeful',
+  target_audience: 'Adults 18+',
+  tone: 'informative',
   include_isi: true,
   black_box_warning: '',
   duration_seconds: 30,
-  setting: 'everyday life',
-  protagonist_description: 'a middle-aged adult',
+  setting: 'Everyday clinical and lifestyle settings',
+  protagonist_description: 'Adult patient representative of indicated population',
 };
 
 export const useAdStore = create<AdStore>()(
@@ -59,17 +63,26 @@ export const useAdStore = create<AdStore>()(
     (set, get) => ({
       mode: 'copy',
       form: defaultForm,
+      wizardStep: 0,
       isLoading: false,
       error: null,
       result: null,
       projects: [],
 
-      setMode: (mode) => set({ mode, result: null, error: null }),
+      setMode: (mode) => set({ mode, result: null, error: null, wizardStep: 0 }),
+
+      setWizardStep: (wizardStep) => set({ wizardStep }),
 
       updateForm: (fields) =>
         set((state) => ({ form: { ...state.form, ...fields } })),
 
-      resetForm: () => set({ form: defaultForm, result: null, error: null }),
+      resetForm: () =>
+        set({
+          form: defaultForm,
+          result: null,
+          error: null,
+          wizardStep: 0,
+        }),
 
       generate: async () => {
         const { mode, form } = get();
@@ -100,7 +113,10 @@ export const useAdStore = create<AdStore>()(
           set({ result, isLoading: false });
         } catch (e) {
           set({
-            error: e instanceof Error ? e.message : 'Generation failed',
+            error:
+              e instanceof Error
+                ? e.message
+                : 'Generation failed. Please try again.',
             isLoading: false,
           });
         }
@@ -114,6 +130,8 @@ export const useAdStore = create<AdStore>()(
           mode,
           drug_name: form.drug_name,
           created_at: new Date().toISOString(),
+          status: 'needs_mlr',
+          version: 1,
           result,
         };
         set((state) => ({ projects: [project, ...state.projects] }));
@@ -124,10 +142,17 @@ export const useAdStore = create<AdStore>()(
           projects: state.projects.filter((p) => p.id !== id),
         })),
 
+      updateProjectStatus: (id, status) =>
+        set((state) => ({
+          projects: state.projects.map((p) =>
+            p.id === id ? { ...p, status } : p
+          ),
+        })),
+
       clearResult: () => set({ result: null, error: null }),
     }),
     {
-      name: 'pharma-ad-studio-storage',
+      name: 'pharma-content-workspace',
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({ projects: state.projects }),
     }

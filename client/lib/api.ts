@@ -9,13 +9,24 @@ import type {
 async function apiFetch<T>(path: string, body: unknown): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true',
+    },
     body: JSON.stringify(body),
   });
+
   if (!response.ok) {
-    const err = await response.json().catch(() => ({ detail: 'Unknown error' }));
-    throw new Error(err.detail ?? `HTTP ${response.status}`);
+    const err = await response.json().catch(() => ({
+      detail: 'Unable to complete request. Please try again.',
+    }));
+    const detail =
+      typeof err.detail === 'string'
+        ? err.detail
+        : 'Unable to complete request. Please try again.';
+    throw new Error(detail);
   }
+
   return response.json() as Promise<T>;
 }
 
@@ -36,6 +47,11 @@ export async function checkHealth(): Promise<{
   ollama: string;
   model: string;
 }> {
-  const response = await fetch(`${API_BASE_URL}/health`);
+  const response = await fetch(`${API_BASE_URL}/health`, {
+    headers: { 'ngrok-skip-browser-warning': 'true' },
+  });
+  if (!response.ok) {
+    throw new Error('Service unavailable');
+  }
   return response.json();
 }

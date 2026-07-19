@@ -1,298 +1,210 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  StyleSheet,
-  Switch,
-  Alert,
-  ActivityIndicator,
-} from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { Href, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useAdStore } from '@/store/useAdStore';
-import { FormInput } from '@/components/FormInput';
-import { BenefitsList } from '@/components/BenefitsList';
-import { ToneSelector } from '@/components/ToneSelector';
-import { Colors, Spacing, FontSize, Radius } from '@/constants/theme';
-import type { AdTone } from '@/types';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { StatusBadge } from '@/components/ui/StatusBadge';
+import { DisclaimerBanner } from '@/components/ui/DisclaimerBanner';
+import { tokens } from '@/constants/theme';
 
-export default function CreateAdScreen() {
+export default function WorkspaceScreen() {
   const router = useRouter();
-  const { mode, form, isLoading, error, setMode, updateForm, generate, result } =
-    useAdStore();
+  const { projects } = useAdStore();
 
-  const handleGenerate = async () => {
-    if (!form.drug_name.trim() || !form.indication.trim()) {
-      Alert.alert('Missing Fields', 'Drug name and indication are required.');
-      return;
-    }
-    if (form.key_benefits.filter((b) => b.trim()).length === 0) {
-      Alert.alert('Missing Fields', 'Add at least one key benefit.');
-      return;
-    }
-    await generate();
-    if (useAdStore.getState().result) {
-      router.push('/result');
-    }
-  };
+  const needsMlr = projects.filter((p) => p.status === 'needs_mlr').length;
+  const inReview = projects.filter((p) => p.status === 'in_review').length;
+  const approved = projects.filter((p) => p.status === 'approved').length;
+  const recent = projects.slice(0, 4);
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* Header */}
-        <View style={styles.headerCard}>
-          <Text style={styles.headerTitle}>💊 Pharma Ad Studio</Text>
-          <Text style={styles.headerSub}>AI-powered DTC ad generator</Text>
-        </View>
-
-        {/* Mode Toggle */}
-        <View style={styles.modeRow}>
-          <TouchableOpacity
-            style={[styles.modeBtn, mode === 'copy' && styles.modeBtnActive]}
-            onPress={() => setMode('copy')}
-          >
-            <Text
-              style={[
-                styles.modeBtnText,
-                mode === 'copy' && styles.modeBtnTextActive,
-              ]}
-            >
-              📝 Ad Copy
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.modeBtn, mode === 'commercial' && styles.modeBtnActive]}
-            onPress={() => setMode('commercial')}
-          >
-            <Text
-              style={[
-                styles.modeBtnText,
-                mode === 'commercial' && styles.modeBtnTextActive,
-              ]}
-            >
-              🎥 Commercial
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Core Fields */}
-        <FormInput
-          label="Drug Name *"
-          placeholder="e.g. Lipitor (atorvastatin)"
-          value={form.drug_name}
-          onChangeText={(v) => updateForm({ drug_name: v })}
-        />
-        <FormInput
-          label="Indication *"
-          placeholder="e.g. high cholesterol in adults"
-          value={form.indication}
-          onChangeText={(v) => updateForm({ indication: v })}
-          multiline
-        />
-        <FormInput
-          label="Target Audience"
-          placeholder="e.g. adults 45+"
-          value={form.target_audience}
-          onChangeText={(v) => updateForm({ target_audience: v })}
-        />
-        <FormInput
-          label="Black Box Warning (optional)"
-          placeholder="Leave blank if none"
-          value={form.black_box_warning}
-          onChangeText={(v) => updateForm({ black_box_warning: v })}
-          multiline
-        />
-
-        {/* Key Benefits */}
-        <BenefitsList
-          benefits={form.key_benefits}
-          onChange={(benefits) => updateForm({ key_benefits: benefits })}
-        />
-
-        {/* Tone */}
-        <ToneSelector
-          selected={form.tone}
-          onSelect={(tone: AdTone) => updateForm({ tone })}
-        />
-
-        {/* ISI Toggle */}
-        <View style={styles.row}>
-          <Text style={styles.label}>Include ISI</Text>
-          <Switch
-            value={form.include_isi}
-            onValueChange={(v) => updateForm({ include_isi: v })}
-            trackColor={{ true: Colors.accent }}
-            thumbColor={Colors.white}
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.hero}>
+          <Text style={styles.kicker}>CONTENT AUTHORING</Text>
+          <Text style={styles.heroTitle}>Workspace</Text>
+          <Text style={styles.heroSub}>
+            AI-assisted pharmaceutical content drafting with structured MLR
+            readiness checks.
+          </Text>
+          <Button
+            title="Create content draft"
+            onPress={() => router.push('/(tabs)/create' as Href)}
+            style={{ marginTop: tokens.spacing[4] }}
           />
         </View>
 
-        {/* Commercial-only fields */}
-        {mode === 'commercial' && (
-          <>
-            <View style={styles.row}>
-              <Text style={styles.label}>Duration</Text>
-              <View style={styles.durationRow}>
-                {([30, 60] as const).map((d) => (
-                  <TouchableOpacity
-                    key={d}
-                    style={[
-                      styles.durationBtn,
-                      form.duration_seconds === d && styles.durationBtnActive,
-                    ]}
-                    onPress={() => updateForm({ duration_seconds: d })}
-                  >
-                    <Text
-                      style={[
-                        styles.durationText,
-                        form.duration_seconds === d && styles.durationTextActive,
-                      ]}
-                    >
-                      {d}s
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-            <FormInput
-              label="Commercial Setting"
-              placeholder="e.g. sunny park, kitchen"
-              value={form.setting}
-              onChangeText={(v) => updateForm({ setting: v })}
-            />
-            <FormInput
-              label="Protagonist"
-              placeholder="e.g. a woman in her 50s"
-              value={form.protagonist_description}
-              onChangeText={(v) => updateForm({ protagonist_description: v })}
-            />
-          </>
-        )}
+        <View style={styles.metrics}>
+          <Metric
+            label="Needs MLR"
+            value={String(needsMlr)}
+            icon="alert-circle-outline"
+          />
+          <Metric
+            label="In review"
+            value={String(inReview)}
+            icon="time-outline"
+          />
+          <Metric
+            label="Approved"
+            value={String(approved)}
+            icon="checkmark-circle-outline"
+          />
+        </View>
 
-        {/* Error */}
-        {error && (
-          <View style={styles.errorBox}>
-            <Text style={styles.errorText}>⚠️ {error}</Text>
-          </View>
-        )}
+        <SectionHeader
+          title="Recent activity"
+          subtitle="Latest drafts in your content library"
+          right={
+            <TouchableOpacity onPress={() => router.push('/projects')}>
+              <Text style={styles.link}>View all</Text>
+            </TouchableOpacity>
+          }
+        />
 
-        {/* Generate Button */}
-        <TouchableOpacity
-          style={[styles.generateBtn, isLoading && styles.generateBtnDisabled]}
-          onPress={handleGenerate}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator color={Colors.white} />
-          ) : (
-            <Text style={styles.generateBtnText}>
-              ✨ Generate {mode === 'copy' ? 'Ad Copy' : 'Commercial Script'}
+        {recent.length === 0 ? (
+          <Card>
+            <Text style={styles.emptyTitle}>No drafts yet</Text>
+            <Text style={styles.emptyBody}>
+              Create a patient-facing copy or broadcast script draft to begin
+              your review workflow.
             </Text>
-          )}
-        </TouchableOpacity>
+          </Card>
+        ) : (
+          recent.map((p) => (
+            <Card key={p.id} style={styles.item}>
+              <View style={styles.itemTop}>
+                <Text style={styles.itemTitle} numberOfLines={1}>
+                  {p.drug_name}
+                </Text>
+                <StatusBadge status={p.status} />
+              </View>
+              <Text style={styles.itemMeta}>
+                {p.mode === 'copy' ? 'Patient-facing copy' : 'Broadcast script'}{' '}
+                · v{p.version} ·{' '}
+                {new Date(p.created_at).toLocaleDateString(undefined, {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </Text>
+            </Card>
+          ))
+        )}
 
-        <Text style={styles.disclaimer}>
-          ⚠️ All output requires MLR review before real-world use.
-        </Text>
+        <View style={{ marginTop: tokens.spacing[6] }}>
+          <DisclaimerBanner />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+function Metric({
+  label,
+  value,
+  icon,
+}: {
+  label: string;
+  value: string;
+  icon: keyof typeof Ionicons.glyphMap;
+}) {
+  return (
+    <Card style={styles.metricCard} elevated={false}>
+      <Ionicons name={icon} size={18} color={tokens.color.brand[700]} />
+      <Text style={styles.metricValue}>{value}</Text>
+      <Text style={styles.metricLabel}>{label}</Text>
+    </Card>
+  );
+}
+
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: Colors.background },
-  scroll: { flex: 1 },
-  content: { padding: Spacing.md, paddingBottom: Spacing.xxl },
-  headerCard: {
-    backgroundColor: Colors.primary,
-    borderRadius: Radius.lg,
-    padding: Spacing.lg,
-    marginBottom: Spacing.md,
-    alignItems: 'center',
+  safe: { flex: 1, backgroundColor: tokens.color.neutral[50] },
+  content: {
+    padding: tokens.spacing[4],
+    paddingBottom: tokens.spacing[12],
   },
-  headerTitle: {
-    color: Colors.white,
-    fontSize: FontSize.xl,
-    fontWeight: '800',
+  hero: {
+    backgroundColor: tokens.color.brand[900],
+    borderRadius: tokens.radius.xl,
+    padding: tokens.spacing[5],
+    marginBottom: tokens.spacing[5],
   },
-  headerSub: {
-    color: Colors.accentLight,
-    fontSize: FontSize.sm,
-    marginTop: 4,
+  kicker: {
+    color: tokens.color.accent[100],
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+    marginBottom: 8,
   },
-  modeRow: {
+  heroTitle: {
+    color: tokens.color.neutral[0],
+    fontSize: tokens.typography.display,
+    fontWeight: '700',
+    letterSpacing: -0.5,
+  },
+  heroSub: {
+    marginTop: 8,
+    color: 'rgba(255,255,255,0.78)',
+    fontSize: tokens.typography.bodySmall,
+    lineHeight: 20,
+  },
+  metrics: {
     flexDirection: 'row',
-    backgroundColor: Colors.card,
-    borderRadius: Radius.md,
-    padding: 4,
-    marginBottom: Spacing.md,
-    borderWidth: 1,
-    borderColor: Colors.border,
+    gap: 10,
+    marginBottom: tokens.spacing[6],
   },
-  modeBtn: {
+  metricCard: {
     flex: 1,
-    paddingVertical: Spacing.sm,
-    borderRadius: Radius.sm,
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    paddingVertical: tokens.spacing[3],
   },
-  modeBtnActive: { backgroundColor: Colors.primary },
-  modeBtnText: { color: Colors.textSecondary, fontWeight: '600', fontSize: FontSize.md },
-  modeBtnTextActive: { color: Colors.white },
-  label: { fontSize: FontSize.md, fontWeight: '600', color: Colors.text },
-  row: {
+  metricValue: {
+    marginTop: 8,
+    fontSize: 22,
+    fontWeight: '700',
+    color: tokens.color.neutral[900],
+  },
+  metricLabel: {
+    marginTop: 2,
+    fontSize: 11,
+    color: tokens.color.neutral[500],
+    fontWeight: '600',
+  },
+  link: {
+    color: tokens.color.brand[700],
+    fontWeight: '600',
+    fontSize: tokens.typography.bodySmall,
+  },
+  item: { marginBottom: tokens.spacing[2] },
+  itemTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: Colors.card,
-    borderRadius: Radius.md,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderWidth: 1,
-    borderColor: Colors.border,
+    gap: 8,
+    marginBottom: 6,
   },
-  durationRow: { flexDirection: 'row', gap: Spacing.sm },
-  durationBtn: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: Radius.sm,
-    borderWidth: 1,
-    borderColor: Colors.border,
+  itemTitle: {
+    flex: 1,
+    fontSize: tokens.typography.h3,
+    fontWeight: '700',
+    color: tokens.color.neutral[900],
   },
-  durationBtnActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
-  durationText: { color: Colors.textSecondary, fontWeight: '600' },
-  durationTextActive: { color: Colors.white },
-  errorBox: {
-    backgroundColor: '#FEE2E2',
-    borderRadius: Radius.md,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
-    borderWidth: 1,
-    borderColor: Colors.error,
+  itemMeta: {
+    fontSize: tokens.typography.caption,
+    color: tokens.color.neutral[500],
   },
-  errorText: { color: Colors.error, fontSize: FontSize.sm },
-  generateBtn: {
-    backgroundColor: Colors.accent,
-    borderRadius: Radius.lg,
-    padding: Spacing.md,
-    alignItems: 'center',
-    marginTop: Spacing.md,
-    shadowColor: Colors.accent,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
+  emptyTitle: {
+    fontSize: tokens.typography.h3,
+    fontWeight: '700',
+    color: tokens.color.neutral[900],
+    marginBottom: 6,
   },
-  generateBtnDisabled: { opacity: 0.6 },
-  generateBtnText: { color: Colors.white, fontSize: FontSize.lg, fontWeight: '800' },
-  disclaimer: {
-    textAlign: 'center',
-    color: Colors.textSecondary,
-    fontSize: FontSize.xs,
-    marginTop: Spacing.md,
-    lineHeight: 16,
+  emptyBody: {
+    fontSize: tokens.typography.bodySmall,
+    color: tokens.color.neutral[500],
+    lineHeight: 20,
   },
 });

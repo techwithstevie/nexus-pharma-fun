@@ -1,5 +1,15 @@
 export type AdTone = 'hopeful' | 'clinical' | 'empowering' | 'informative';
 
+export type ContentStatus =
+  | 'draft'
+  | 'needs_mlr'
+  | 'in_review'
+  | 'needs_changes'
+  | 'approved'
+  | 'archived';
+
+export type AdMode = 'copy' | 'commercial';
+
 export interface AdGenerationRequest {
   drug_name: string;
   indication: string;
@@ -41,12 +51,12 @@ export interface CommercialScriptResponse {
   compliance_notes: string;
 }
 
-export type AdMode = 'copy' | 'commercial';
-
 export interface SavedProject {
   id: string;
   mode: AdMode;
   drug_name: string;
   created_at: string;
+  status: ContentStatus;
+  version: number;
   result: AdCopyResponse | CommercialScriptResponse;
 }

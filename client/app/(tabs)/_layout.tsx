@@ -1,26 +1,44 @@
 import { Tabs } from 'expo-router';
-import { Colors } from '@/constants/theme';
 import { Ionicons } from '@expo/vector-icons';
+import { tokens } from '@/constants/theme';
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors.accent,
-        tabBarInactiveTintColor: Colors.textSecondary,
+        tabBarActiveTintColor: tokens.color.brand[900],
+        tabBarInactiveTintColor: tokens.color.neutral[400],
         tabBarStyle: {
-          backgroundColor: Colors.card,
-          borderTopColor: Colors.border,
+          backgroundColor: tokens.color.neutral[0],
+          borderTopColor: tokens.color.neutral[200],
+          height: 60,
+          paddingBottom: 8,
+          paddingTop: 6,
         },
-        headerStyle: { backgroundColor: Colors.primary },
-        headerTintColor: Colors.white,
-        headerTitleStyle: { fontWeight: '700' },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: '600',
+          letterSpacing: 0.2,
+        },
+        headerStyle: { backgroundColor: tokens.color.brand[900] },
+        headerTintColor: tokens.color.neutral[0],
+        headerTitleStyle: { fontWeight: '600', fontSize: 17 },
+        headerShadowVisible: false,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Create Ad',
+          title: 'Workspace',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="grid-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="create"
+        options={{
+          title: 'Create',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="create-outline" color={color} size={size} />
           ),
@@ -29,9 +47,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="projects"
         options={{
-          title: 'Projects',
+          title: 'Library',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="folder-outline" color={color} size={size} />
+            <Ionicons name="folder-open-outline" color={color} size={size} />
           ),
         }}
       />

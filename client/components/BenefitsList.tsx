@@ -1,5 +1,6 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import { Colors, FontSize, Radius, Spacing } from '@/constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import { tokens } from '@/constants/theme';
 
 interface Props {
   benefits: string[];
@@ -23,13 +24,18 @@ export function BenefitsList({ benefits, onChange }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Key Benefits * (max 5)</Text>
+      <Text style={styles.label}>
+        Key benefit claims <Text style={styles.req}>*</Text>
+      </Text>
+      <Text style={styles.helper}>
+        Enter only claims supported by approved labeling or substantiation.
+      </Text>
       {benefits.map((benefit, i) => (
         <View key={i} style={styles.row}>
           <TextInput
             style={styles.input}
-            placeholder={`Benefit ${i + 1}`}
-            placeholderTextColor={Colors.textSecondary}
+            placeholder={`Claim ${i + 1}`}
+            placeholderTextColor={tokens.color.neutral[400]}
             value={benefit}
             onChangeText={(v) => update(i, v)}
             autoCorrect={false}
@@ -38,62 +44,86 @@ export function BenefitsList({ benefits, onChange }: Props) {
             onPress={() => remove(i)}
             style={styles.removeBtn}
             disabled={benefits.length === 1}
+            accessibilityLabel="Remove claim"
           >
-            <Text style={styles.removeBtnText}>✕</Text>
+            <Ionicons
+              name="close"
+              size={18}
+              color={
+                benefits.length === 1
+                  ? tokens.color.neutral[300]
+                  : tokens.color.status.danger
+              }
+            />
           </TouchableOpacity>
         </View>
       ))}
-      {benefits.length < 5 && (
+      {benefits.length < 5 ? (
         <TouchableOpacity style={styles.addBtn} onPress={add}>
-          <Text style={styles.addBtnText}>+ Add Benefit</Text>
+          <Ionicons name="add" size={18} color={tokens.color.brand[700]} />
+          <Text style={styles.addBtnText}>Add claim</Text>
         </TouchableOpacity>
-      )}
+      ) : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { marginBottom: Spacing.sm },
+  container: { marginBottom: tokens.spacing[4] },
   label: {
-    fontSize: FontSize.sm,
+    fontSize: tokens.typography.label,
     fontWeight: '600',
-    color: Colors.text,
+    color: tokens.color.neutral[700],
     marginBottom: 4,
+  },
+  req: { color: tokens.color.status.danger },
+  helper: {
+    fontSize: tokens.typography.caption,
+    color: tokens.color.neutral[500],
+    marginBottom: tokens.spacing[2],
+    lineHeight: 16,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: 8,
     gap: 8,
   },
   input: {
     flex: 1,
-    backgroundColor: Colors.card,
+    backgroundColor: tokens.color.neutral[0],
     borderWidth: 1,
-    borderColor: Colors.border,
-    borderRadius: Radius.md,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    fontSize: FontSize.md,
-    color: Colors.text,
+    borderColor: tokens.color.neutral[300],
+    borderRadius: tokens.radius.md,
+    paddingHorizontal: tokens.spacing[4],
+    paddingVertical: 12,
+    fontSize: tokens.typography.body,
+    color: tokens.color.neutral[900],
+    minHeight: 48,
   },
   removeBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: Radius.full,
-    backgroundColor: '#FEE2E2',
+    width: 40,
+    height: 40,
+    borderRadius: tokens.radius.md,
+    backgroundColor: tokens.color.neutral[100],
     alignItems: 'center',
     justifyContent: 'center',
   },
-  removeBtnText: { color: Colors.error, fontWeight: '700', fontSize: FontSize.sm },
   addBtn: {
-    borderWidth: 1,
-    borderColor: Colors.accent,
-    borderStyle: 'dashed',
-    borderRadius: Radius.md,
-    padding: Spacing.sm,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    borderWidth: 1,
+    borderColor: tokens.color.brand[600],
+    borderStyle: 'dashed',
+    borderRadius: tokens.radius.md,
+    paddingVertical: 12,
     marginTop: 4,
   },
-  addBtnText: { color: Colors.accent, fontWeight: '600', fontSize: FontSize.sm },
+  addBtnText: {
+    color: tokens.color.brand[700],
+    fontWeight: '600',
+    fontSize: tokens.typography.bodySmall,
+  },
 });

@@ -3,7 +3,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { Colors } from '@/constants/theme';
+import { tokens } from '@/constants/theme';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -14,19 +14,26 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar style="light" backgroundColor={Colors.primary} />
+      <StatusBar style="light" />
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: Colors.primary },
-          headerTintColor: Colors.white,
-          headerTitleStyle: { fontWeight: '700' },
-          contentStyle: { backgroundColor: Colors.background },
+          headerStyle: { backgroundColor: tokens.color.brand[900] },
+          headerTintColor: tokens.color.neutral[0],
+          headerTitleStyle: {
+            fontWeight: '600',
+            fontSize: 17,
+          },
+          headerShadowVisible: false,
+          contentStyle: { backgroundColor: tokens.color.neutral[50] },
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="result"
-          options={{ title: 'Generated Ad', headerBackTitle: 'Back' }}
+          options={{
+            title: 'Content Review',
+            headerBackTitle: 'Back',
+          }}
         />
       </Stack>
     </SafeAreaProvider>
