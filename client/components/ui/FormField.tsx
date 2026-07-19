@@ -61,9 +61,9 @@ const styles = StyleSheet.create({
     },
     req: { color: tokens.color.status.danger },
     input: {
-        backgroundColor: tokens.color.bg.muted,
+        backgroundColor: 'rgba(26, 26, 26, 0.7)',
         borderWidth: 1,
-        borderColor: tokens.color.border.default,
+        borderColor: 'rgba(42, 42, 42, 0.6)',
         borderRadius: tokens.radius.md,
         paddingHorizontal: tokens.spacing[4],
         paddingVertical: 14,

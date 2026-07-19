@@ -6,6 +6,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
+        headerShown: false,
         tabBarActiveTintColor: tokens.color.text.primary,
         tabBarInactiveTintColor: tokens.color.text.tertiary,
         tabBarStyle: {
@@ -56,6 +57,15 @@ export default function TabLayout() {
           title: 'Library',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="folder-open-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="assets"
+        options={{
+          title: 'Assets',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="images-outline" color={color} size={size} />
           ),
         }}
       />

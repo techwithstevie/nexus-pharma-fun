@@ -1,4 +1,53 @@
 export type AdTone = 'hopeful' | 'clinical' | 'empowering' | 'informative';
+export type MediaJobStatus = 'queued' | 'running' | 'completed' | 'failed';
+export type MediaKind = 'image' | 'video';
+
+export interface MediaJob {
+  id: string;
+  kind: MediaKind;
+  status: MediaJobStatus;
+  prompt: string;
+  created_at: string;
+  updated_at: string;
+  progress: number;
+  error: string | null;
+  result_url: string | null;
+  thumbnail_url: string | null;
+  meta: Record<string, unknown>;
+}
+
+export interface ImageGenerateRequest {
+  prompt: string;
+  negative_prompt?: string;
+  width?: number;
+  height?: number;
+  steps?: number;
+  seed?: number | null;
+  product_name?: string;
+  style?: string;
+}
+
+export interface VideoGenerateRequest {
+  prompt: string;
+  negative_prompt?: string;
+  seconds?: number;
+  fps?: number;
+  width?: number;
+  height?: number;
+  seed?: number | null;
+  source_image_job_id?: string | null;
+  product_name?: string;
+}
+
+export interface SceneAssetRequest {
+  drug_name: string;
+  scene_number: number;
+  visual_description: string;
+  voiceover?: string;
+  on_screen_text?: string | null;
+  generate_video?: boolean;
+  style?: string;
+}
 
 export type ContentStatus =
   | 'draft'

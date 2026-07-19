@@ -23,9 +23,9 @@ export function DisclaimerBanner() {
 const styles = StyleSheet.create({
     wrap: {
         flexDirection: 'row',
-        backgroundColor: tokens.color.status.warningSoft,
+        backgroundColor: 'rgba(251, 191, 36, 0.12)',
         borderWidth: 1,
-        borderColor: 'rgba(251,191,36,0.22)',
+        borderColor: 'rgba(251, 191, 36, 0.3)',
         borderRadius: tokens.radius.md,
         padding: tokens.spacing[3],
         gap: tokens.spacing[2],

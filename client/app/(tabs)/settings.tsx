@@ -1,13 +1,30 @@
-import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { checkHealth } from '@/lib/api';
-import { API_BASE_URL } from '@/constants/api';
-import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { SectionHeader } from '@/components/ui/SectionHeader';
+import { Card } from '@/components/ui/Card';
 import { DisclaimerBanner } from '@/components/ui/DisclaimerBanner';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { API_BASE_URL } from '@/constants/api';
 import { tokens } from '@/constants/theme';
+import { checkHealth } from '@/lib/api';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Dimensions, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+function DigitalBackground() {
+  return (
+    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+      <View style={styles.gridContainer}>
+        {[...Array(20)].map((_, i) => (
+          <View key={`h-${i}`} style={[styles.gridLine, styles.gridHorizontal, { top: i * 40 }]} />
+        ))}
+        {[...Array(Math.ceil(SCREEN_WIDTH / 40))].map((_, i) => (
+          <View key={`v-${i}`} style={[styles.gridLine, styles.gridVertical, { left: i * 40 }]} />
+        ))}
+      </View>
+    </View>
+  );
+}
 
 export default function SettingsScreen() {
   const [health, setHealth] = useState<{
@@ -40,6 +57,7 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
+      <DigitalBackground />
       <View style={styles.content}>
         <Text style={styles.eyebrow}>SYSTEM</Text>
         <Text style={styles.title}>Environment</Text>
@@ -132,6 +150,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 1.4,
     marginBottom: 6,
+    textAlign: 'center',
   },
   title: {
     fontSize: tokens.typography.h1,
@@ -139,6 +158,7 @@ const styles = StyleSheet.create({
     color: tokens.color.text.primary,
     letterSpacing: -0.4,
     marginBottom: tokens.spacing[5],
+    textAlign: 'center',
   },
   label: {
     fontSize: tokens.typography.caption,
@@ -183,5 +203,26 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: tokens.color.text.tertiary,
     fontSize: tokens.typography.caption,
+  },
+  gridContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  gridLine: {
+    position: 'absolute',
+    backgroundColor: 'rgba(91, 141, 239, 0.08)',
+  },
+  gridHorizontal: {
+    left: 0,
+    right: 0,
+    height: 1,
+  },
+  gridVertical: {
+    top: 0,
+    bottom: 0,
+    width: 1,
   },
 });

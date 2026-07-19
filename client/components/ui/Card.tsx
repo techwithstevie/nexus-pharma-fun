@@ -18,15 +18,15 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     default: {
-        backgroundColor: tokens.color.bg.surface,
-        borderColor: tokens.color.border.subtle,
+        backgroundColor: 'rgba(17, 17, 17, 0.85)',
+        borderColor: 'rgba(31, 31, 31, 0.6)',
     },
     elevated: {
-        backgroundColor: tokens.color.bg.elevated,
-        borderColor: tokens.color.border.default,
+        backgroundColor: 'rgba(10, 10, 10, 0.9)',
+        borderColor: 'rgba(42, 42, 42, 0.7)',
     },
     inset: {
-        backgroundColor: tokens.color.bg.muted,
-        borderColor: tokens.color.border.subtle,
+        backgroundColor: 'rgba(26, 26, 26, 0.7)',
+        borderColor: 'rgba(31, 31, 31, 0.5)',
     },
 });

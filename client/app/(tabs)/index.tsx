@@ -1,20 +1,39 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
-import { useRouter, type Href } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { useAdStore } from '@/store/useAdStore';
-import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { DisclaimerBanner } from '@/components/ui/DisclaimerBanner';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { DisclaimerBanner } from '@/components/ui/DisclaimerBanner';
 import { tokens } from '@/constants/theme';
+import { useAdStore } from '@/store/useAdStore';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter, type Href } from 'expo-router';
+import {
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+function DigitalBackground() {
+  return (
+    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+      {/* Grid pattern */}
+      <View style={styles.gridContainer}>
+        {[...Array(20)].map((_, i) => (
+          <View key={`h-${i}`} style={[styles.gridLine, styles.gridHorizontal, { top: i * 40 }]} />
+        ))}
+        {[...Array(Math.ceil(SCREEN_WIDTH / 40))].map((_, i) => (
+          <View key={`v-${i}`} style={[styles.gridLine, styles.gridVertical, { left: i * 40 }]} />
+        ))}
+      </View>
+    </View>
+  );
+}
 
 export default function WorkspaceScreen() {
   const router = useRouter();
@@ -27,6 +46,7 @@ export default function WorkspaceScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
+      <DigitalBackground />
       <ScrollView contentContainerStyle={styles.content}>
         {/* Top bar brand */}
         <View style={styles.topBar}>
@@ -53,6 +73,7 @@ export default function WorkspaceScreen() {
           <Button
             title="New content draft"
             onPress={() => router.push('/(tabs)/create' as Href)}
+            variant="soft"
             style={styles.heroCta}
           />
         </View>
@@ -193,6 +214,7 @@ const styles = StyleSheet.create({
     paddingBottom: tokens.spacing[6],
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: tokens.color.border.subtle,
+    alignItems: 'center',
   },
   heroEyebrow: {
     color: tokens.color.text.tertiary,
@@ -200,6 +222,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 1.4,
     marginBottom: 12,
+    textAlign: 'center',
   },
   heroTitle: {
     color: tokens.color.text.primary,
@@ -208,16 +231,18 @@ const styles = StyleSheet.create({
     letterSpacing: -0.8,
     lineHeight: 38,
     marginBottom: 12,
+    textAlign: 'center',
   },
   heroBody: {
     color: tokens.color.text.secondary,
     fontSize: tokens.typography.bodySmall,
     lineHeight: 20,
     maxWidth: 340,
+    textAlign: 'center',
   },
   heroCta: {
     marginTop: tokens.spacing[5],
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
     minWidth: 180,
   },
   metrics: {
@@ -293,5 +318,26 @@ const styles = StyleSheet.create({
     fontSize: tokens.typography.bodySmall,
     color: tokens.color.text.tertiary,
     lineHeight: 19,
+  },
+  gridContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  gridLine: {
+    position: 'absolute',
+    backgroundColor: 'rgba(91, 141, 239, 0.08)',
+  },
+  gridHorizontal: {
+    left: 0,
+    right: 0,
+    height: 1,
+  },
+  gridVertical: {
+    top: 0,
+    bottom: 0,
+    width: 1,
   },
 });

@@ -1,15 +1,15 @@
-import {
-    TouchableOpacity,
-    Text,
-    StyleSheet,
-    ActivityIndicator,
-    type StyleProp,
-    type ViewStyle,
-    type TextStyle,
-} from 'react-native';
 import { tokens } from '@/constants/theme';
+import {
+    ActivityIndicator,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    type StyleProp,
+    type TextStyle,
+    type ViewStyle,
+} from 'react-native';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'soft';
 
 interface Props {
     title: string;
@@ -69,18 +69,23 @@ const styles = StyleSheet.create({
     primary: {
         backgroundColor: tokens.color.text.primary,
     },
-    secondary: {
-        backgroundColor: tokens.color.bg.muted,
+    soft: {
+        backgroundColor: 'rgba(255, 255, 255, 0.60)',
         borderWidth: 1,
-        borderColor: tokens.color.border.default,
+        borderColor: 'rgba(255, 255, 255, 0.28)',
+    },
+    secondary: {
+        backgroundColor: 'rgba(26, 26, 26, 0.8)',
+        borderWidth: 1,
+        borderColor: 'rgba(42, 42, 42, 0.7)',
     },
     ghost: {
         backgroundColor: 'transparent',
     },
     danger: {
-        backgroundColor: tokens.color.status.dangerSoft,
+        backgroundColor: 'rgba(248, 113, 113, 0.15)',
         borderWidth: 1,
-        borderColor: 'rgba(248,113,113,0.35)',
+        borderColor: 'rgba(248, 113, 113, 0.4)',
     },
     disabled: { opacity: 0.4 },
     text: {
@@ -88,6 +93,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     primaryText: { color: tokens.color.text.inverse },
+    softText: { color: tokens.color.text.inverse },
     secondaryText: { color: tokens.color.text.primary },
     ghostText: { color: tokens.color.text.secondary },
     dangerText: { color: tokens.color.status.danger },

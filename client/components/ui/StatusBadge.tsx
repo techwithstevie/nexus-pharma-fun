@@ -8,39 +8,39 @@ const CONFIG: Record<
 > = {
     draft: {
         label: 'Draft',
-        bg: tokens.color.status.neutralSoft,
+        bg: 'rgba(161, 161, 170, 0.12)',
         fg: tokens.color.status.neutral,
-        border: 'rgba(161,161,170,0.25)',
+        border: 'rgba(161, 161, 170, 0.3)',
     },
     needs_mlr: {
         label: 'Needs MLR',
-        bg: tokens.color.status.warningSoft,
+        bg: 'rgba(251, 191, 36, 0.12)',
         fg: tokens.color.status.warning,
-        border: 'rgba(251,191,36,0.28)',
+        border: 'rgba(251, 191, 36, 0.35)',
     },
     in_review: {
         label: 'In review',
-        bg: tokens.color.status.infoSoft,
+        bg: 'rgba(96, 165, 250, 0.12)',
         fg: tokens.color.status.info,
-        border: 'rgba(96,165,250,0.28)',
+        border: 'rgba(96, 165, 250, 0.35)',
     },
     needs_changes: {
         label: 'Needs changes',
-        bg: tokens.color.status.dangerSoft,
+        bg: 'rgba(248, 113, 113, 0.12)',
         fg: tokens.color.status.danger,
-        border: 'rgba(248,113,113,0.28)',
+        border: 'rgba(248, 113, 113, 0.35)',
     },
     approved: {
         label: 'Approved',
-        bg: tokens.color.status.successSoft,
+        bg: 'rgba(52, 211, 153, 0.12)',
         fg: tokens.color.status.success,
-        border: 'rgba(52,211,153,0.28)',
+        border: 'rgba(52, 211, 153, 0.35)',
     },
     archived: {
         label: 'Archived',
-        bg: tokens.color.bg.muted,
+        bg: 'rgba(26, 26, 26, 0.7)',
         fg: tokens.color.text.tertiary,
-        border: tokens.color.border.subtle,
+        border: 'rgba(31, 31, 31, 0.5)',
     },
 };
 

@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Alert,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAdStore } from '@/store/useAdStore';
@@ -21,6 +22,22 @@ const FILTERS: { key: ContentStatus | 'all'; label: string }[] = [
   { key: 'in_review', label: 'In review' },
   { key: 'approved', label: 'Approved' },
 ];
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+function DigitalBackground() {
+  return (
+    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+      <View style={styles.gridContainer}>
+        {[...Array(20)].map((_, i) => (
+          <View key={`h-${i}`} style={[styles.gridLine, styles.gridHorizontal, { top: i * 40 }]} />
+        ))}
+        {[...Array(Math.ceil(SCREEN_WIDTH / 40))].map((_, i) => (
+          <View key={`v-${i}`} style={[styles.gridLine, styles.gridVertical, { left: i * 40 }]} />
+        ))}
+      </View>
+    </View>
+  );
+}
 
 export default function LibraryScreen() {
   const { projects, deleteProject, updateProjectStatus } = useAdStore();
@@ -38,6 +55,7 @@ export default function LibraryScreen() {
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
+      <DigitalBackground />
       <View style={styles.header}>
         <Text style={styles.eyebrow}>LIBRARY</Text>
         <Text style={styles.title}>Content library</Text>
@@ -153,6 +171,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 1.4,
     marginBottom: 6,
+    textAlign: 'center',
   },
   title: {
     fontSize: tokens.typography.h1,
@@ -160,6 +179,7 @@ const styles = StyleSheet.create({
     color: tokens.color.text.primary,
     letterSpacing: -0.4,
     marginBottom: tokens.spacing[3],
+    textAlign: 'center',
   },
   filters: {
     flexDirection: 'row',
@@ -167,6 +187,7 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: tokens.spacing[4],
     paddingBottom: tokens.spacing[2],
+    justifyContent: 'center',
   },
   chip: {
     paddingHorizontal: 12,
@@ -240,5 +261,26 @@ const styles = StyleSheet.create({
     fontSize: tokens.typography.bodySmall,
     color: tokens.color.text.tertiary,
     lineHeight: 20,
+  },
+  gridContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  gridLine: {
+    position: 'absolute',
+    backgroundColor: 'rgba(91, 141, 239, 0.08)',
+  },
+  gridHorizontal: {
+    left: 0,
+    right: 0,
+    height: 1,
+  },
+  gridVertical: {
+    top: 0,
+    bottom: 0,
+    width: 1,
   },
 });

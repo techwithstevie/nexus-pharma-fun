@@ -7,6 +7,7 @@ import {
     Switch,
     TouchableOpacity,
     Alert,
+    Dimensions,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -22,6 +23,22 @@ import { tokens } from '@/constants/theme';
 import type { AdTone } from '@/types';
 
 const STEPS = ['Product', 'Audience', 'Message', 'Safety', 'Generate'];
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+function DigitalBackground() {
+    return (
+        <View style={StyleSheet.absoluteFill} pointerEvents="none">
+            <View style={styles.gridContainer}>
+                {[...Array(20)].map((_, i) => (
+                    <View key={`h-${i}`} style={[styles.gridLine, styles.gridHorizontal, { top: i * 40 }]} />
+                ))}
+                {[...Array(Math.ceil(SCREEN_WIDTH / 40))].map((_, i) => (
+                    <View key={`v-${i}`} style={[styles.gridLine, styles.gridVertical, { left: i * 40 }]} />
+                ))}
+            </View>
+        </View>
+    );
+}
 
 export default function CreateScreen() {
     const router = useRouter();
@@ -67,6 +84,7 @@ export default function CreateScreen() {
 
     return (
         <SafeAreaView style={styles.safe} edges={['bottom']}>
+            <DigitalBackground />
             <ScrollView
                 contentContainerStyle={styles.content}
                 keyboardShouldPersistTaps="handled"
@@ -262,22 +280,20 @@ export default function CreateScreen() {
                             onPress={() => setWizardStep(wizardStep - 1)}
                             style={{ flex: 1 }}
                         />
-                    ) : (
-                        <View style={{ flex: 1 }} />
-                    )}
+                    ) : null}
                     {wizardStep < STEPS.length - 1 ? (
                         <Button
                             title="Continue"
                             onPress={() => setWizardStep(wizardStep + 1)}
                             disabled={!canNext}
-                            style={{ flex: 1 }}
+                            style={wizardStep > 0 ? { flex: 1 } : { minWidth: 320 }}
                         />
                     ) : (
                         <Button
                             title="Generate draft"
                             onPress={onGenerate}
                             loading={isLoading}
-                            style={{ flex: 1 }}
+                            style={wizardStep > 0 ? { flex: 1 } : { minWidth: 320 }}
                         />
                     )}
                 </View>
@@ -311,12 +327,14 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         letterSpacing: 1.4,
         marginBottom: 8,
+        textAlign: 'center',
     },
     pageTitle: {
         fontSize: tokens.typography.h1,
         fontWeight: '600',
         color: tokens.color.text.primary,
         letterSpacing: -0.4,
+        textAlign: 'center',
     },
     pageSub: {
         marginTop: 6,
@@ -324,6 +342,7 @@ const styles = StyleSheet.create({
         fontSize: tokens.typography.bodySmall,
         color: tokens.color.text.tertiary,
         lineHeight: 19,
+        textAlign: 'center',
     },
     modeRow: {
         flexDirection: 'row',
@@ -441,5 +460,27 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 12,
         marginTop: tokens.spacing[4],
+        justifyContent: 'center',
+    },
+    gridContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+    },
+    gridLine: {
+        position: 'absolute',
+        backgroundColor: 'rgba(91, 141, 239, 0.08)',
+    },
+    gridHorizontal: {
+        left: 0,
+        right: 0,
+        height: 1,
+    },
+    gridVertical: {
+        top: 0,
+        bottom: 0,
+        width: 1,
     },
 });

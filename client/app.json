@@ -9,7 +9,7 @@
     "scheme": "pharmaadstudio",
     "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#050505"
     },
