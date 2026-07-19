@@ -4,44 +4,56 @@ import type { ContentStatus } from '@/types';
 
 const CONFIG: Record<
     ContentStatus,
-    { label: string; bg: string; fg: string }
+    { label: string; bg: string; fg: string; border: string }
 > = {
     draft: {
         label: 'Draft',
-        bg: tokens.color.status.pendingBg,
-        fg: tokens.color.status.pending,
+        bg: tokens.color.status.neutralSoft,
+        fg: tokens.color.status.neutral,
+        border: 'rgba(161,161,170,0.25)',
     },
     needs_mlr: {
-        label: 'Needs MLR Review',
-        bg: tokens.color.status.warningBg,
+        label: 'Needs MLR',
+        bg: tokens.color.status.warningSoft,
         fg: tokens.color.status.warning,
+        border: 'rgba(251,191,36,0.28)',
     },
     in_review: {
-        label: 'In Review',
-        bg: tokens.color.status.infoBg,
+        label: 'In review',
+        bg: tokens.color.status.infoSoft,
         fg: tokens.color.status.info,
+        border: 'rgba(96,165,250,0.28)',
     },
     needs_changes: {
-        label: 'Needs Changes',
-        bg: tokens.color.status.dangerBg,
+        label: 'Needs changes',
+        bg: tokens.color.status.dangerSoft,
         fg: tokens.color.status.danger,
+        border: 'rgba(248,113,113,0.28)',
     },
     approved: {
         label: 'Approved',
-        bg: tokens.color.status.successBg,
+        bg: tokens.color.status.successSoft,
         fg: tokens.color.status.success,
+        border: 'rgba(52,211,153,0.28)',
     },
     archived: {
         label: 'Archived',
-        bg: tokens.color.neutral[100],
-        fg: tokens.color.neutral[600],
+        bg: tokens.color.bg.muted,
+        fg: tokens.color.text.tertiary,
+        border: tokens.color.border.subtle,
     },
 };
 
 export function StatusBadge({ status }: { status: ContentStatus }) {
     const cfg = CONFIG[status];
     return (
-        <View style={[styles.badge, { backgroundColor: cfg.bg }]}>
+        <View
+            style={[
+                styles.badge,
+                { backgroundColor: cfg.bg, borderColor: cfg.border },
+            ]}
+        >
+            <View style={[styles.dot, { backgroundColor: cfg.fg }]} />
             <Text style={[styles.text, { color: cfg.fg }]}>{cfg.label}</Text>
         </View>
     );
@@ -49,15 +61,24 @@ export function StatusBadge({ status }: { status: ContentStatus }) {
 
 const styles = StyleSheet.create({
     badge: {
+        flexDirection: 'row',
+        alignItems: 'center',
         alignSelf: 'flex-start',
+        gap: 6,
         paddingHorizontal: 10,
-        paddingVertical: 4,
+        paddingVertical: 5,
         borderRadius: tokens.radius.full,
+        borderWidth: 1,
+    },
+    dot: {
+        width: 6,
+        height: 6,
+        borderRadius: 3,
     },
     text: {
-        fontSize: tokens.typography.caption,
+        fontSize: 10,
         fontWeight: '700',
-        letterSpacing: 0.3,
+        letterSpacing: 0.4,
         textTransform: 'uppercase',
     },
 });

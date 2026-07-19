@@ -25,7 +25,9 @@ export default function SettingsScreen() {
       const data = await checkHealth();
       setHealth(data);
     } catch {
-      setError('Unable to reach authoring services. Verify API and tunnel status.');
+      setError(
+        'Unable to reach authoring services. Verify API and tunnel status.'
+      );
       setHealth(null);
     } finally {
       setLoading(false);
@@ -39,9 +41,12 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       <View style={styles.content}>
+        <Text style={styles.eyebrow}>SYSTEM</Text>
+        <Text style={styles.title}>Environment</Text>
+
         <SectionHeader
-          title="Environment"
-          subtitle="Service connectivity and model configuration"
+          title="Connectivity"
+          subtitle="Service health and model configuration"
         />
 
         <Card style={{ marginBottom: tokens.spacing[3] }}>
@@ -52,7 +57,10 @@ export default function SettingsScreen() {
         </Card>
 
         {loading ? (
-          <ActivityIndicator color={tokens.color.brand[700]} style={{ marginVertical: 16 }} />
+          <ActivityIndicator
+            color={tokens.color.text.secondary}
+            style={{ marginVertical: 16 }}
+          />
         ) : null}
 
         {error ? (
@@ -80,11 +88,11 @@ export default function SettingsScreen() {
         <Button title="Refresh status" onPress={fetchHealth} variant="secondary" />
 
         <View style={{ marginTop: tokens.spacing[6] }}>
-          <SectionHeader title="Compliance notice" />
+          <SectionHeader title="Compliance" />
           <DisclaimerBanner />
         </View>
 
-        <Text style={styles.version}>Content Authoring Platform · v1.0.0</Text>
+        <Text style={styles.version}>NEXUS Content Operations · v1.0.0</Text>
       </View>
     </SafeAreaView>
   );
@@ -116,40 +124,54 @@ function Row({
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: tokens.color.neutral[50] },
+  safe: { flex: 1, backgroundColor: tokens.color.bg.base },
   content: { padding: tokens.spacing[4] },
+  eyebrow: {
+    color: tokens.color.text.tertiary,
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 1.4,
+    marginBottom: 6,
+  },
+  title: {
+    fontSize: tokens.typography.h1,
+    fontWeight: '600',
+    color: tokens.color.text.primary,
+    letterSpacing: -0.4,
+    marginBottom: tokens.spacing[5],
+  },
   label: {
     fontSize: tokens.typography.caption,
     fontWeight: '700',
-    color: tokens.color.neutral[500],
+    color: tokens.color.text.tertiary,
     textTransform: 'uppercase',
-    letterSpacing: 0.6,
-    marginBottom: 6,
+    letterSpacing: 0.7,
+    marginBottom: 8,
   },
   value: {
     fontSize: tokens.typography.bodySmall,
-    color: tokens.color.neutral[900],
+    color: tokens.color.text.primary,
     lineHeight: 20,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: tokens.color.neutral[100],
+    paddingVertical: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: tokens.color.border.subtle,
   },
   rowLabel: {
     fontSize: tokens.typography.bodySmall,
-    color: tokens.color.neutral[500],
+    color: tokens.color.text.tertiary,
   },
   rowValue: {
     fontSize: tokens.typography.bodySmall,
-    fontWeight: '700',
-    color: tokens.color.neutral[900],
+    fontWeight: '600',
+    color: tokens.color.text.primary,
   },
   errorCard: {
-    backgroundColor: tokens.color.status.dangerBg,
-    borderColor: '#FECACA',
+    backgroundColor: tokens.color.status.dangerSoft,
+    borderColor: 'rgba(248,113,113,0.28)',
     marginBottom: tokens.spacing[3],
   },
   errorText: {
@@ -157,9 +179,9 @@ const styles = StyleSheet.create({
     fontSize: tokens.typography.bodySmall,
   },
   version: {
-    marginTop: tokens.spacing[8],
+    marginTop: tokens.spacing[10],
     textAlign: 'center',
-    color: tokens.color.neutral[400],
+    color: tokens.color.text.tertiary,
     fontSize: tokens.typography.caption,
   },
 });

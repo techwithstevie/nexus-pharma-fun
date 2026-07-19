@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, StyleSheet, Share } from 'react-native';
-import { Href, useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAdStore } from '@/store/useAdStore';
 import { Card } from '@/components/ui/Card';
@@ -14,7 +14,7 @@ export default function ResultScreen() {
   const { result, mode, form, saveProject, clearResult } = useAdStore();
 
   if (!result) {
-    router.replace('/');
+    router.replace('/' as Href);
     return null;
   }
 
@@ -41,21 +41,23 @@ export default function ResultScreen() {
 
   const handleSave = () => {
     saveProject();
-    router.push('/projects');
+    router.push('/(tabs)/projects' as Href);
   };
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Card style={styles.headerCard}>
+        <Card variant="elevated" style={styles.headerCard}>
           <View style={styles.headerTop}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.docId}>{docId} · Version 1</Text>
+              <Text style={styles.docId}>{docId} · VERSION 1</Text>
               <Text style={styles.product}>{form.drug_name}</Text>
               <Text style={styles.format}>
                 {mode === 'copy'
                   ? 'Patient-facing copy'
-                  : `Broadcast script · ${(result as CommercialScriptResponse).duration_seconds ?? form.duration_seconds}s`}
+                  : `Broadcast script · ${(result as CommercialScriptResponse).duration_seconds ??
+                  form.duration_seconds
+                  }s`}
               </Text>
             </View>
             <StatusBadge status="needs_mlr" />
@@ -82,7 +84,7 @@ export default function ResultScreen() {
         <View style={styles.actions}>
           <Button title="Save to library" onPress={handleSave} style={{ flex: 1 }} />
           <Button
-            title="Export / share"
+            title="Export"
             variant="secondary"
             onPress={handleShare}
             style={{ flex: 1 }}
@@ -90,12 +92,12 @@ export default function ResultScreen() {
         </View>
         <Button
           title="Create new draft"
-          variant="tertiary"
+          variant="ghost"
           onPress={() => {
             clearResult();
             router.replace('/(tabs)/create' as Href);
           }}
-          style={{ marginTop: 8 }}
+          style={{ marginTop: 4 }}
         />
       </ScrollView>
     </SafeAreaView>
@@ -172,7 +174,7 @@ function DocSection({
 
 function Meta({ label, value }: { label: string; value: string }) {
   return (
-    <View style={{ marginTop: 10 }}>
+    <View style={{ marginTop: 12 }}>
       <Text style={styles.metaLabel}>{label}</Text>
       <Text style={styles.metaValue}>{value}</Text>
     </View>
@@ -180,15 +182,14 @@ function Meta({ label, value }: { label: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: tokens.color.neutral[50] },
+  safe: { flex: 1, backgroundColor: tokens.color.bg.base },
   content: {
     padding: tokens.spacing[4],
-    paddingBottom: tokens.spacing[12],
+    paddingBottom: tokens.spacing[16],
     gap: tokens.spacing[3],
   },
   headerCard: {
-    backgroundColor: tokens.color.brand[900],
-    borderColor: tokens.color.brand[800],
+    borderColor: tokens.color.border.default,
   },
   headerTop: {
     flexDirection: 'row',
@@ -196,103 +197,100 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   docId: {
-    color: 'rgba(255,255,255,0.65)',
-    fontSize: 11,
+    color: tokens.color.text.tertiary,
+    fontSize: 10,
     fontWeight: '700',
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
-    marginBottom: 6,
+    letterSpacing: 1,
+    marginBottom: 8,
   },
   product: {
-    color: tokens.color.neutral[0],
+    color: tokens.color.text.primary,
     fontSize: tokens.typography.h1,
-    fontWeight: '700',
-    letterSpacing: -0.3,
+    fontWeight: '600',
+    letterSpacing: -0.4,
   },
   format: {
-    marginTop: 4,
-    color: 'rgba(255,255,255,0.75)',
+    marginTop: 6,
+    color: tokens.color.text.secondary,
     fontSize: tokens.typography.bodySmall,
   },
   section: { marginBottom: 0 },
   sectionRisk: {
-    backgroundColor: tokens.color.status.warningBg,
-    borderColor: '#FDE68A',
+    backgroundColor: tokens.color.status.warningSoft,
+    borderColor: 'rgba(251,191,36,0.22)',
   },
   sectionTitle: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
-    color: tokens.color.brand[700],
+    color: tokens.color.text.tertiary,
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    marginBottom: 10,
+    letterSpacing: 0.9,
+    marginBottom: 12,
   },
   sectionTitleRisk: {
     color: tokens.color.status.warning,
   },
   docHeadline: {
     fontSize: tokens.typography.h2,
-    fontWeight: '700',
-    color: tokens.color.neutral[900],
+    fontWeight: '600',
+    color: tokens.color.text.primary,
     lineHeight: 26,
+    letterSpacing: -0.2,
   },
   docBody: {
     fontSize: tokens.typography.body,
-    color: tokens.color.neutral[800],
+    color: tokens.color.text.secondary,
     lineHeight: 23,
   },
   docCta: {
     fontSize: tokens.typography.body,
-    fontWeight: '700',
-    color: tokens.color.brand[800],
+    fontWeight: '600',
+    color: tokens.color.text.brand,
     lineHeight: 22,
   },
   docIsi: {
     fontSize: tokens.typography.bodySmall,
-    color: tokens.color.neutral[700],
+    color: tokens.color.text.secondary,
     lineHeight: 20,
   },
   sceneCard: {
-    borderLeftWidth: 3,
-    borderLeftColor: tokens.color.brand[700],
+    borderLeftWidth: 2,
+    borderLeftColor: tokens.color.brand.primary,
   },
   sceneTitle: {
     fontSize: tokens.typography.h3,
-    fontWeight: '700',
-    color: tokens.color.neutral[900],
+    fontWeight: '600',
+    color: tokens.color.text.primary,
   },
   sceneDur: {
     fontWeight: '500',
-    color: tokens.color.neutral[500],
+    color: tokens.color.text.tertiary,
   },
   metaLabel: {
     fontSize: 10,
     fontWeight: '700',
-    color: tokens.color.neutral[500],
+    color: tokens.color.text.tertiary,
     textTransform: 'uppercase',
     letterSpacing: 0.7,
-    marginBottom: 3,
+    marginBottom: 4,
   },
   metaValue: {
     fontSize: tokens.typography.bodySmall,
-    color: tokens.color.neutral[800],
+    color: tokens.color.text.secondary,
     lineHeight: 20,
   },
-  riskCard: {
-    backgroundColor: tokens.color.neutral[0],
-    borderColor: tokens.color.neutral[200],
-  },
+  riskCard: {},
   riskTitle: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
-    color: tokens.color.neutral[500],
+    color: tokens.color.text.tertiary,
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    marginBottom: 8,
+    letterSpacing: 0.9,
+    marginBottom: 10,
   },
   riskBody: {
     fontSize: tokens.typography.bodySmall,
-    color: tokens.color.neutral[800],
+    color: tokens.color.text.secondary,
     lineHeight: 20,
   },
   actions: {

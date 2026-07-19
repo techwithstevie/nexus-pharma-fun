@@ -53,7 +53,10 @@ export default function CreateScreen() {
             return;
         }
         if (!form.key_benefits.some((b) => b.trim())) {
-            Alert.alert('Missing information', 'Add at least one substantiated benefit claim.');
+            Alert.alert(
+                'Missing information',
+                'Add at least one substantiated benefit claim.'
+            );
             return;
         }
         await generate();
@@ -68,9 +71,10 @@ export default function CreateScreen() {
                 contentContainerStyle={styles.content}
                 keyboardShouldPersistTaps="handled"
             >
+                <Text style={styles.pageEyebrow}>AUTHORING</Text>
                 <Text style={styles.pageTitle}>Create content draft</Text>
                 <Text style={styles.pageSub}>
-                    Guided authoring for regulated patient-facing materials.
+                    Guided workflow for regulated patient-facing materials.
                 </Text>
 
                 <View style={styles.modeRow}>
@@ -87,7 +91,10 @@ export default function CreateScreen() {
                         onPress={() => setMode('commercial')}
                     >
                         <Text
-                            style={[styles.modeText, mode === 'commercial' && styles.modeTextOn]}
+                            style={[
+                                styles.modeText,
+                                mode === 'commercial' && styles.modeTextOn,
+                            ]}
                         >
                             Broadcast script
                         </Text>
@@ -145,7 +152,7 @@ export default function CreateScreen() {
                                                         form.duration_seconds === d && styles.durationTextOn,
                                                     ]}
                                                 >
-                                                    {d} seconds
+                                                    {d}s
                                                 </Text>
                                             </TouchableOpacity>
                                         ))}
@@ -192,7 +199,9 @@ export default function CreateScreen() {
                             />
                             <View style={styles.switchRow}>
                                 <View style={{ flex: 1, paddingRight: 12 }}>
-                                    <Text style={styles.switchTitle}>Include ISI / major statement</Text>
+                                    <Text style={styles.switchTitle}>
+                                        Include ISI / major statement
+                                    </Text>
                                     <Text style={styles.switchHelper}>
                                         Recommended for DTC materials requiring fair balance and risk
                                         disclosure.
@@ -202,10 +211,10 @@ export default function CreateScreen() {
                                     value={form.include_isi}
                                     onValueChange={(v) => updateForm({ include_isi: v })}
                                     trackColor={{
-                                        true: tokens.color.brand[700],
-                                        false: tokens.color.neutral[300],
+                                        true: tokens.color.brand.primary,
+                                        false: tokens.color.border.strong,
                                     }}
-                                    thumbColor={tokens.color.neutral[0]}
+                                    thumbColor={tokens.color.text.primary}
                                 />
                             </View>
                         </>
@@ -291,30 +300,37 @@ function SummaryRow({ label, value }: { label: string; value: string }) {
 }
 
 const styles = StyleSheet.create({
-    safe: { flex: 1, backgroundColor: tokens.color.neutral[50] },
+    safe: { flex: 1, backgroundColor: tokens.color.bg.base },
     content: {
         padding: tokens.spacing[4],
-        paddingBottom: tokens.spacing[12],
+        paddingBottom: tokens.spacing[16],
+    },
+    pageEyebrow: {
+        color: tokens.color.text.tertiary,
+        fontSize: 10,
+        fontWeight: '700',
+        letterSpacing: 1.4,
+        marginBottom: 8,
     },
     pageTitle: {
         fontSize: tokens.typography.h1,
-        fontWeight: '700',
-        color: tokens.color.neutral[900],
-        letterSpacing: -0.3,
+        fontWeight: '600',
+        color: tokens.color.text.primary,
+        letterSpacing: -0.4,
     },
     pageSub: {
         marginTop: 6,
-        marginBottom: tokens.spacing[4],
+        marginBottom: tokens.spacing[5],
         fontSize: tokens.typography.bodySmall,
-        color: tokens.color.neutral[500],
+        color: tokens.color.text.tertiary,
         lineHeight: 19,
     },
     modeRow: {
         flexDirection: 'row',
-        backgroundColor: tokens.color.neutral[0],
+        backgroundColor: tokens.color.bg.muted,
         borderRadius: tokens.radius.md,
         borderWidth: 1,
-        borderColor: tokens.color.neutral[200],
+        borderColor: tokens.color.border.subtle,
         padding: 4,
         marginBottom: tokens.spacing[4],
     },
@@ -325,43 +341,49 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modeBtnOn: {
-        backgroundColor: tokens.color.brand[900],
+        backgroundColor: tokens.color.bg.surface,
+        borderWidth: 1,
+        borderColor: tokens.color.border.default,
     },
     modeText: {
         fontSize: tokens.typography.bodySmall,
         fontWeight: '600',
-        color: tokens.color.neutral[600],
+        color: tokens.color.text.tertiary,
     },
     modeTextOn: {
-        color: tokens.color.neutral[0],
+        color: tokens.color.text.primary,
     },
     fieldLabel: {
         fontSize: tokens.typography.label,
         fontWeight: '600',
-        color: tokens.color.neutral[700],
+        color: tokens.color.text.secondary,
         marginBottom: 8,
     },
-    durationRow: { flexDirection: 'row', gap: 8, marginBottom: tokens.spacing[4] },
+    durationRow: {
+        flexDirection: 'row',
+        gap: 8,
+        marginBottom: tokens.spacing[4],
+    },
     durationBtn: {
         flex: 1,
         minHeight: 44,
         borderRadius: tokens.radius.md,
         borderWidth: 1,
-        borderColor: tokens.color.neutral[300],
+        borderColor: tokens.color.border.default,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: tokens.color.neutral[0],
+        backgroundColor: tokens.color.bg.muted,
     },
     durationBtnOn: {
-        borderColor: tokens.color.brand[700],
-        backgroundColor: tokens.color.brand[50],
+        borderColor: tokens.color.brand.border,
+        backgroundColor: tokens.color.brand.soft,
     },
     durationText: {
         fontWeight: '600',
-        color: tokens.color.neutral[600],
+        color: tokens.color.text.tertiary,
         fontSize: tokens.typography.bodySmall,
     },
-    durationTextOn: { color: tokens.color.brand[900] },
+    durationTextOn: { color: tokens.color.text.brand },
     switchRow: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -370,45 +392,45 @@ const styles = StyleSheet.create({
     switchTitle: {
         fontSize: tokens.typography.body,
         fontWeight: '600',
-        color: tokens.color.neutral[900],
+        color: tokens.color.text.primary,
     },
     switchHelper: {
         marginTop: 4,
         fontSize: tokens.typography.caption,
-        color: tokens.color.neutral[500],
+        color: tokens.color.text.tertiary,
         lineHeight: 16,
     },
     summaryTitle: {
         fontSize: tokens.typography.h3,
-        fontWeight: '700',
-        color: tokens.color.neutral[900],
+        fontWeight: '600',
+        color: tokens.color.text.primary,
         marginBottom: tokens.spacing[3],
     },
     summaryRow: {
-        paddingVertical: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: tokens.color.neutral[100],
+        paddingVertical: 12,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: tokens.color.border.subtle,
     },
     summaryLabel: {
-        fontSize: 11,
+        fontSize: 10,
         fontWeight: '700',
-        color: tokens.color.neutral[500],
+        color: tokens.color.text.tertiary,
         textTransform: 'uppercase',
-        letterSpacing: 0.6,
+        letterSpacing: 0.8,
         marginBottom: 4,
     },
     summaryValue: {
         fontSize: tokens.typography.body,
-        color: tokens.color.neutral[900],
+        color: tokens.color.text.primary,
         lineHeight: 21,
     },
     errorBox: {
         marginTop: tokens.spacing[3],
-        backgroundColor: tokens.color.status.dangerBg,
+        backgroundColor: tokens.color.status.dangerSoft,
         borderRadius: tokens.radius.md,
         padding: tokens.spacing[3],
         borderWidth: 1,
-        borderColor: '#FECACA',
+        borderColor: 'rgba(248,113,113,0.28)',
     },
     errorText: {
         color: tokens.color.status.danger,

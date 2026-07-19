@@ -3,13 +3,13 @@ import {
     Text,
     StyleSheet,
     ActivityIndicator,
-    ViewStyle,
-    TextStyle,
-    StyleProp
+    type StyleProp,
+    type ViewStyle,
+    type TextStyle,
 } from 'react-native';
 import { tokens } from '@/constants/theme';
 
-type Variant = 'primary' | 'secondary' | 'tertiary' | 'danger';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 interface Props {
     title: string;
@@ -34,24 +34,19 @@ export function Button({
 
     return (
         <TouchableOpacity
-            style={[
-                styles.base,
-                styles[variant],
-                isDisabled && styles.disabled,
-                style,
-            ]}
+            style={[styles.base, styles[variant], isDisabled && styles.disabled, style]}
             onPress={onPress}
             disabled={isDisabled}
-            activeOpacity={0.85}
+            activeOpacity={0.82}
             accessibilityRole="button"
             accessibilityState={{ disabled: isDisabled, busy: loading }}
         >
             {loading ? (
                 <ActivityIndicator
                     color={
-                        variant === 'secondary' || variant === 'tertiary'
-                            ? tokens.color.brand[900]
-                            : tokens.color.neutral[0]
+                        variant === 'secondary' || variant === 'ghost'
+                            ? tokens.color.text.primary
+                            : tokens.color.text.inverse
                     }
                 />
             ) : (
@@ -72,37 +67,28 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     primary: {
-        backgroundColor: tokens.color.brand[900],
+        backgroundColor: tokens.color.text.primary,
     },
     secondary: {
-        backgroundColor: tokens.color.neutral[0],
+        backgroundColor: tokens.color.bg.muted,
         borderWidth: 1,
-        borderColor: tokens.color.neutral[300],
+        borderColor: tokens.color.border.default,
     },
-    tertiary: {
+    ghost: {
         backgroundColor: 'transparent',
     },
     danger: {
-        backgroundColor: tokens.color.status.danger,
+        backgroundColor: tokens.color.status.dangerSoft,
+        borderWidth: 1,
+        borderColor: 'rgba(248,113,113,0.35)',
     },
-    disabled: {
-        opacity: 0.5,
-    },
+    disabled: { opacity: 0.4 },
     text: {
-        fontSize: tokens.typography.body,
+        fontSize: tokens.typography.bodySmall,
         fontWeight: '600',
-        letterSpacing: 0.2,
     },
-    primaryText: {
-        color: tokens.color.neutral[0],
-    },
-    secondaryText: {
-        color: tokens.color.neutral[800],
-    },
-    tertiaryText: {
-        color: tokens.color.brand[700],
-    },
-    dangerText: {
-        color: tokens.color.neutral[0],
-    },
+    primaryText: { color: tokens.color.text.inverse },
+    secondaryText: { color: tokens.color.text.primary },
+    ghostText: { color: tokens.color.text.secondary },
+    dangerText: { color: tokens.color.status.danger },
 });

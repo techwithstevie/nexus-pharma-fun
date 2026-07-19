@@ -7,7 +7,7 @@ export function DisclaimerBanner() {
         <View style={styles.wrap} accessibilityRole="text">
             <Ionicons
                 name="shield-checkmark-outline"
-                size={18}
+                size={16}
                 color={tokens.color.status.warning}
                 style={styles.icon}
             />
@@ -23,9 +23,9 @@ export function DisclaimerBanner() {
 const styles = StyleSheet.create({
     wrap: {
         flexDirection: 'row',
-        backgroundColor: tokens.color.status.warningBg,
+        backgroundColor: tokens.color.status.warningSoft,
         borderWidth: 1,
-        borderColor: '#FDE68A',
+        borderColor: 'rgba(251,191,36,0.22)',
         borderRadius: tokens.radius.md,
         padding: tokens.spacing[3],
         gap: tokens.spacing[2],
@@ -35,6 +35,6 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: tokens.typography.caption,
         color: tokens.color.status.warning,
-        lineHeight: 17,
+        lineHeight: 16,
     },
 });

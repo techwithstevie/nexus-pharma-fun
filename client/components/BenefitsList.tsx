@@ -28,17 +28,18 @@ export function BenefitsList({ benefits, onChange }: Props) {
         Key benefit claims <Text style={styles.req}>*</Text>
       </Text>
       <Text style={styles.helper}>
-        Enter only claims supported by approved labeling or substantiation.
+        Only claims supported by approved labeling or substantiation.
       </Text>
       {benefits.map((benefit, i) => (
         <View key={i} style={styles.row}>
           <TextInput
             style={styles.input}
             placeholder={`Claim ${i + 1}`}
-            placeholderTextColor={tokens.color.neutral[400]}
+            placeholderTextColor={tokens.color.text.tertiary}
             value={benefit}
             onChangeText={(v) => update(i, v)}
             autoCorrect={false}
+            selectionColor={tokens.color.brand.primary}
           />
           <TouchableOpacity
             onPress={() => remove(i)}
@@ -48,10 +49,10 @@ export function BenefitsList({ benefits, onChange }: Props) {
           >
             <Ionicons
               name="close"
-              size={18}
+              size={16}
               color={
                 benefits.length === 1
-                  ? tokens.color.neutral[300]
+                  ? tokens.color.text.tertiary
                   : tokens.color.status.danger
               }
             />
@@ -60,7 +61,7 @@ export function BenefitsList({ benefits, onChange }: Props) {
       ))}
       {benefits.length < 5 ? (
         <TouchableOpacity style={styles.addBtn} onPress={add}>
-          <Ionicons name="add" size={18} color={tokens.color.brand[700]} />
+          <Ionicons name="add" size={16} color={tokens.color.text.secondary} />
           <Text style={styles.addBtnText}>Add claim</Text>
         </TouchableOpacity>
       ) : null}
@@ -73,14 +74,14 @@ const styles = StyleSheet.create({
   label: {
     fontSize: tokens.typography.label,
     fontWeight: '600',
-    color: tokens.color.neutral[700],
-    marginBottom: 4,
+    color: tokens.color.text.secondary,
+    marginBottom: 6,
   },
   req: { color: tokens.color.status.danger },
   helper: {
     fontSize: tokens.typography.caption,
-    color: tokens.color.neutral[500],
-    marginBottom: tokens.spacing[2],
+    color: tokens.color.text.tertiary,
+    marginBottom: tokens.spacing[3],
     lineHeight: 16,
   },
   row: {
@@ -91,21 +92,23 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    backgroundColor: tokens.color.neutral[0],
+    backgroundColor: tokens.color.bg.muted,
     borderWidth: 1,
-    borderColor: tokens.color.neutral[300],
+    borderColor: tokens.color.border.default,
     borderRadius: tokens.radius.md,
     paddingHorizontal: tokens.spacing[4],
-    paddingVertical: 12,
+    paddingVertical: 14,
     fontSize: tokens.typography.body,
-    color: tokens.color.neutral[900],
-    minHeight: 48,
+    color: tokens.color.text.primary,
+    minHeight: 50,
   },
   removeBtn: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: tokens.radius.md,
-    backgroundColor: tokens.color.neutral[100],
+    backgroundColor: tokens.color.bg.muted,
+    borderWidth: 1,
+    borderColor: tokens.color.border.subtle,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -115,14 +118,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 6,
     borderWidth: 1,
-    borderColor: tokens.color.brand[600],
+    borderColor: tokens.color.border.default,
     borderStyle: 'dashed',
     borderRadius: tokens.radius.md,
-    paddingVertical: 12,
+    paddingVertical: 14,
     marginTop: 4,
   },
   addBtnText: {
-    color: tokens.color.brand[700],
+    color: tokens.color.text.secondary,
     fontWeight: '600',
     fontSize: tokens.typography.bodySmall,
   },

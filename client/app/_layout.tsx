@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { StyleSheet } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
@@ -17,23 +18,17 @@ export default function RootLayout() {
       <StatusBar style="light" />
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: tokens.color.brand[900] },
-          headerTintColor: tokens.color.neutral[0],
-          headerTitleStyle: {
-            fontWeight: '600',
-            fontSize: 17,
-          },
+          headerStyle: { backgroundColor: tokens.color.bg.base },
+          headerTintColor: tokens.color.text.primary,
+          headerTitleStyle: { fontWeight: '600', fontSize: 16 },
           headerShadowVisible: false,
-          contentStyle: { backgroundColor: tokens.color.neutral[50] },
+          contentStyle: { backgroundColor: tokens.color.bg.base },
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen
           name="result"
-          options={{
-            title: 'Content Review',
-            headerBackTitle: 'Back',
-          }}
+          options={{ title: 'Content review', headerBackTitle: 'Back' }}
         />
       </Stack>
     </SafeAreaProvider>

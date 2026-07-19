@@ -27,7 +27,7 @@ export function Stepper({ steps, current }: Props) {
                                     (active || done) && styles.dotTextOn,
                                 ]}
                             >
-                                {done ? '✓' : i + 1}
+                                {done ? '✓' : String(i + 1)}
                             </Text>
                         </View>
                         <Text
@@ -61,48 +61,50 @@ const styles = StyleSheet.create({
         width: 28,
         height: 28,
         borderRadius: 14,
-        backgroundColor: tokens.color.neutral[100],
+        backgroundColor: tokens.color.bg.muted,
         borderWidth: 1,
-        borderColor: tokens.color.neutral[300],
+        borderColor: tokens.color.border.default,
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 1,
     },
     dotActive: {
-        backgroundColor: tokens.color.brand[900],
-        borderColor: tokens.color.brand[900],
+        backgroundColor: tokens.color.text.primary,
+        borderColor: tokens.color.text.primary,
     },
     dotDone: {
-        backgroundColor: tokens.color.accent[600],
-        borderColor: tokens.color.accent[600],
+        backgroundColor: tokens.color.brand.soft,
+        borderColor: tokens.color.brand.border,
     },
     dotText: {
         fontSize: 11,
         fontWeight: '700',
-        color: tokens.color.neutral[500],
+        color: tokens.color.text.tertiary,
     },
-    dotTextOn: { color: tokens.color.neutral[0] },
+    dotTextOn: {
+        color: tokens.color.text.inverse,
+    },
     label: {
-        marginTop: 6,
+        marginTop: 8,
         fontSize: 10,
-        color: tokens.color.neutral[500],
+        color: tokens.color.text.tertiary,
         textAlign: 'center',
         fontWeight: '500',
     },
     labelActive: {
-        color: tokens.color.brand[900],
-        fontWeight: '700',
+        color: tokens.color.text.primary,
+        fontWeight: '600',
     },
     line: {
         position: 'absolute',
         top: 14,
         left: '55%',
         right: '-55%',
-        height: 1,
-        backgroundColor: tokens.color.neutral[200],
+        height: StyleSheet.hairlineWidth,
+        backgroundColor: tokens.color.border.default,
         zIndex: 0,
     },
     lineDone: {
-        backgroundColor: tokens.color.accent[600],
+        backgroundColor: tokens.color.brand.primary,
     },
 });

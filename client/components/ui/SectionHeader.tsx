@@ -29,14 +29,14 @@ const styles = StyleSheet.create({
     textBlock: { flex: 1, paddingRight: tokens.spacing[3] },
     title: {
         fontSize: tokens.typography.h2,
-        fontWeight: '700',
-        color: tokens.color.neutral[900],
-        letterSpacing: -0.2,
+        fontWeight: '600',
+        color: tokens.color.text.primary,
+        letterSpacing: -0.3,
     },
     subtitle: {
         marginTop: 4,
         fontSize: tokens.typography.bodySmall,
-        color: tokens.color.neutral[500],
+        color: tokens.color.text.tertiary,
         lineHeight: 18,
     },
 });

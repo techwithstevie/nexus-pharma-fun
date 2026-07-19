@@ -6,24 +6,30 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: tokens.color.brand[900],
-        tabBarInactiveTintColor: tokens.color.neutral[400],
+        tabBarActiveTintColor: tokens.color.text.primary,
+        tabBarInactiveTintColor: tokens.color.text.tertiary,
         tabBarStyle: {
-          backgroundColor: tokens.color.neutral[0],
-          borderTopColor: tokens.color.neutral[200],
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 6,
+          backgroundColor: tokens.color.bg.elevated,
+          borderTopColor: tokens.color.border.subtle,
+          borderTopWidth: 1,
+          height: 62,
+          paddingBottom: 10,
+          paddingTop: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 11,
+          fontSize: 10,
           fontWeight: '600',
-          letterSpacing: 0.2,
         },
-        headerStyle: { backgroundColor: tokens.color.brand[900] },
-        headerTintColor: tokens.color.neutral[0],
-        headerTitleStyle: { fontWeight: '600', fontSize: 17 },
+        headerStyle: {
+          backgroundColor: tokens.color.bg.base,
+        },
+        headerTintColor: tokens.color.text.primary,
+        headerTitleStyle: {
+          fontWeight: '600',
+          fontSize: 16,
+        },
         headerShadowVisible: false,
+        sceneStyle: { backgroundColor: tokens.color.bg.base },
       }}
     >
       <Tabs.Screen
@@ -40,7 +46,7 @@ export default function TabLayout() {
         options={{
           title: 'Create',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="create-outline" color={color} size={size} />
+            <Ionicons name="add-circle-outline" color={color} size={size} />
           ),
         }}
       />
@@ -56,9 +62,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
+          title: 'System',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" color={color} size={size} />
+            <Ionicons name="options-outline" color={color} size={size} />
           ),
         }}
       />

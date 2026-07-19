@@ -4,23 +4,29 @@ import { tokens } from '@/constants/theme';
 interface Props {
     children: React.ReactNode;
     style?: StyleProp<ViewStyle>;
-    elevated?: boolean;
+    variant?: 'default' | 'elevated' | 'inset';
 }
 
-export function Card({ children, style, elevated = true }: Props) {
-    return (
-        <View style={[styles.card, elevated && tokens.shadow.card, style]}>
-            {children}
-        </View>
-    );
+export function Card({ children, style, variant = 'default' }: Props) {
+    return <View style={[styles.base, styles[variant], style]}>{children}</View>;
 }
 
 const styles = StyleSheet.create({
-    card: {
-        backgroundColor: tokens.color.neutral[0],
+    base: {
         borderRadius: tokens.radius.lg,
-        borderWidth: 1,
-        borderColor: tokens.color.neutral[200],
         padding: tokens.spacing[4],
+        borderWidth: 1,
+    },
+    default: {
+        backgroundColor: tokens.color.bg.surface,
+        borderColor: tokens.color.border.subtle,
+    },
+    elevated: {
+        backgroundColor: tokens.color.bg.elevated,
+        borderColor: tokens.color.border.default,
+    },
+    inset: {
+        backgroundColor: tokens.color.bg.muted,
+        borderColor: tokens.color.border.subtle,
     },
 });

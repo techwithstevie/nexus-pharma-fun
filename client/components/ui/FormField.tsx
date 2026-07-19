@@ -29,15 +29,20 @@ export function FormField({
                 {required ? <Text style={styles.req}> *</Text> : null}
             </Text>
             <TextInput
-                style={[styles.input, multiline && styles.multiline, !editable && styles.disabled]}
+                style={[
+                    styles.input,
+                    multiline && styles.multiline,
+                    !editable && styles.disabled,
+                ]}
                 value={value}
                 onChangeText={onChangeText}
                 placeholder={placeholder}
-                placeholderTextColor={tokens.color.neutral[400]}
+                placeholderTextColor={tokens.color.text.tertiary}
                 multiline={multiline}
                 numberOfLines={multiline ? 4 : 1}
                 editable={editable}
                 autoCorrect={false}
+                selectionColor={tokens.color.brand.primary}
                 accessibilityLabel={label}
             />
             {helper ? <Text style={styles.helper}>{helper}</Text> : null}
@@ -50,34 +55,34 @@ const styles = StyleSheet.create({
     label: {
         fontSize: tokens.typography.label,
         fontWeight: '600',
-        color: tokens.color.neutral[700],
-        marginBottom: 6,
+        color: tokens.color.text.secondary,
+        marginBottom: 8,
+        letterSpacing: 0.2,
     },
     req: { color: tokens.color.status.danger },
     input: {
-        backgroundColor: tokens.color.neutral[0],
+        backgroundColor: tokens.color.bg.muted,
         borderWidth: 1,
-        borderColor: tokens.color.neutral[300],
+        borderColor: tokens.color.border.default,
         borderRadius: tokens.radius.md,
         paddingHorizontal: tokens.spacing[4],
-        paddingVertical: 12,
+        paddingVertical: 14,
         fontSize: tokens.typography.body,
-        color: tokens.color.neutral[900],
-        minHeight: 48,
+        color: tokens.color.text.primary,
+        minHeight: 50,
     },
     multiline: {
-        minHeight: 100,
+        minHeight: 110,
         textAlignVertical: 'top',
-        paddingTop: 12,
+        paddingTop: 14,
     },
     disabled: {
-        backgroundColor: tokens.color.neutral[100],
-        color: tokens.color.neutral[500],
+        opacity: 0.5,
     },
     helper: {
-        marginTop: 6,
+        marginTop: 8,
         fontSize: tokens.typography.caption,
-        color: tokens.color.neutral[500],
+        color: tokens.color.text.tertiary,
         lineHeight: 16,
     },
 });

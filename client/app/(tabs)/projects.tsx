@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -21,30 +22,27 @@ const FILTERS: { key: ContentStatus | 'all'; label: string }[] = [
   { key: 'approved', label: 'Approved' },
 ];
 
-import { useState } from 'react';
-
 export default function LibraryScreen() {
   const { projects, deleteProject, updateProjectStatus } = useAdStore();
   const [filter, setFilter] = useState<ContentStatus | 'all'>('all');
 
   const data =
-    filter === 'all'
-      ? projects
-      : projects.filter((p) => p.status === filter);
+    filter === 'all' ? projects : projects.filter((p) => p.status === filter);
 
   const onDelete = (id: string) => {
     Alert.alert('Delete draft', 'This action cannot be undone.', [
       { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: () => deleteProject(id),
-      },
+      { text: 'Delete', style: 'destructive', onPress: () => deleteProject(id) },
     ]);
   };
 
   return (
     <SafeAreaView style={styles.safe} edges={['bottom']}>
+      <View style={styles.header}>
+        <Text style={styles.eyebrow}>LIBRARY</Text>
+        <Text style={styles.title}>Content library</Text>
+      </View>
+
       <View style={styles.filters}>
         {FILTERS.map((f) => (
           <TouchableOpacity
@@ -97,7 +95,7 @@ function LibraryCard({
   return (
     <Card style={styles.card}>
       <View style={styles.top}>
-        <Text style={styles.title} numberOfLines={1}>
+        <Text style={styles.cardTitle} numberOfLines={1}>
           {project.drug_name}
         </Text>
         <StatusBadge status={project.status} />
@@ -134,7 +132,7 @@ function LibraryCard({
         ) : null}
         <Button
           title="Delete"
-          variant="tertiary"
+          variant="ghost"
           onPress={onDelete}
           style={styles.actionBtn}
         />
@@ -144,36 +142,53 @@ function LibraryCard({
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: tokens.color.neutral[50] },
+  safe: { flex: 1, backgroundColor: tokens.color.bg.base },
+  header: {
+    paddingHorizontal: tokens.spacing[4],
+    paddingTop: tokens.spacing[3],
+  },
+  eyebrow: {
+    color: tokens.color.text.tertiary,
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 1.4,
+    marginBottom: 6,
+  },
+  title: {
+    fontSize: tokens.typography.h1,
+    fontWeight: '600',
+    color: tokens.color.text.primary,
+    letterSpacing: -0.4,
+    marginBottom: tokens.spacing[3],
+  },
   filters: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
     paddingHorizontal: tokens.spacing[4],
-    paddingTop: tokens.spacing[3],
     paddingBottom: tokens.spacing[2],
   },
   chip: {
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: tokens.radius.full,
-    backgroundColor: tokens.color.neutral[0],
+    backgroundColor: tokens.color.bg.muted,
     borderWidth: 1,
-    borderColor: tokens.color.neutral[200],
+    borderColor: tokens.color.border.subtle,
   },
   chipOn: {
-    backgroundColor: tokens.color.brand[900],
-    borderColor: tokens.color.brand[900],
+    backgroundColor: tokens.color.text.primary,
+    borderColor: tokens.color.text.primary,
   },
   chipText: {
     fontSize: 12,
     fontWeight: '600',
-    color: tokens.color.neutral[600],
+    color: tokens.color.text.secondary,
   },
-  chipTextOn: { color: tokens.color.neutral[0] },
+  chipTextOn: { color: tokens.color.text.inverse },
   list: {
     padding: tokens.spacing[4],
-    paddingBottom: tokens.spacing[12],
+    paddingBottom: tokens.spacing[16],
   },
   card: { marginBottom: tokens.spacing[3] },
   top: {
@@ -181,29 +196,30 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 6,
+    marginBottom: 8,
   },
-  title: {
+  cardTitle: {
     flex: 1,
     fontSize: tokens.typography.h3,
-    fontWeight: '700',
-    color: tokens.color.neutral[900],
+    fontWeight: '600',
+    color: tokens.color.text.primary,
   },
   meta: {
     fontSize: tokens.typography.caption,
-    color: tokens.color.neutral[500],
+    color: tokens.color.text.tertiary,
     marginBottom: 2,
   },
   date: {
     fontSize: tokens.typography.caption,
-    color: tokens.color.neutral[400],
-    marginBottom: 8,
+    color: tokens.color.text.tertiary,
+    marginBottom: 10,
+    opacity: 0.8,
   },
   preview: {
     fontSize: tokens.typography.bodySmall,
-    color: tokens.color.neutral[700],
+    color: tokens.color.text.secondary,
     lineHeight: 19,
-    marginBottom: 12,
+    marginBottom: 14,
   },
   actions: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   actionBtn: { minHeight: 40, paddingHorizontal: 14 },
@@ -215,14 +231,14 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontSize: tokens.typography.h2,
-    fontWeight: '700',
-    color: tokens.color.neutral[900],
+    fontWeight: '600',
+    color: tokens.color.text.primary,
     marginBottom: 8,
   },
   emptyBody: {
     textAlign: 'center',
     fontSize: tokens.typography.bodySmall,
-    color: tokens.color.neutral[500],
+    color: tokens.color.text.tertiary,
     lineHeight: 20,
   },
 });
