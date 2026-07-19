@@ -188,8 +188,7 @@ IMAGE_DEVICE=cpu
 ### 📱 `client/.env`
 
 ```env
-EXPO_PUBLIC_API_BASE_URL=http://YOUR_LAN_IP:8000/api/v1
-# or https://xxxx.ngrok-free.app/api/v1
+EXPO_PUBLIC_API_BASE_URL=
 ```
 
 ---
@@ -263,6 +262,15 @@ brew install ffmpeg
 ```
 
 ---
+
+Install ImageMagick
+
+```bash
+# Debian/Ubuntu
+sudo apt install imagemagick
+# macOS
+brew install imagemagick
+```
 
 ## 🧭 Typical workflow
 
