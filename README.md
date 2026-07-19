@@ -2,7 +2,6 @@
 
 > AI-assisted **pharmaceutical content authoring** for patient-facing copy, broadcast scripts, and draft creative assets — built for **MLR-ready** internal workflows.
 
-![Status](https://img.shields.io/badge/status-active-success)
 ![Stack](https://img.shields.io/badge/client-Expo%20%2B%20TypeScript-blue)
 ![API](https://img.shields.io/badge/server-FastAPI%20%2B%20LangGraph-green)
 ![LLM](https://img.shields.io/badge/LLM-Ollama%20(local)-purple)
